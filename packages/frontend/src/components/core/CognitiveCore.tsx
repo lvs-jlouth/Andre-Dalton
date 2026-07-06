@@ -29,37 +29,44 @@ export function CognitiveCore() {
   const label = STATUS_LABELS[status];
   const color = STATUS_COLORS[status];
   const isActive = status !== 'idle';
+  const telemetry = status === 'thinking' ? 'synthesising' : status === 'speaking' ? 'projecting' : status === 'listening' ? 'receiving' : status === 'error' ? 'stalled' : 'nominal';
 
   return (
     <div
-      className="flex flex-col items-center gap-3"
+      className="flex flex-col items-center gap-4"
       aria-live="polite"
       aria-atomic="true"
       aria-label={`AURORA status: ${label}`}
     >
-      {/* Outer decorative rings */}
       <div className="relative flex items-center justify-center">
+        {!reducedMotion && (
+          <>
+            <div className="absolute h-44 w-44 rounded-full border border-aurora-cyan/15 animate-spin-slow" aria-hidden="true" />
+            <div className="absolute h-36 w-36 rounded-full border border-dashed border-aurora-blue/20 animate-spin-reverse-slow" aria-hidden="true" />
+            <div className="absolute h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(0,212,255,0.18),transparent_60%)] blur-2xl animate-drift" aria-hidden="true" />
+          </>
+        )}
+
         <StatusRing
-          size={120}
+          size={156}
           active={isActive}
           pulsing={status === 'listening' && !reducedMotion}
           color={color}
           label={`Outer ring — ${label}`}
         />
 
-        {/* Inner orb */}
+        <div className="absolute h-28 w-28 rounded-full border border-aurora-cyan/20" aria-hidden="true" />
+
         <div
           className={`
-            absolute w-16 h-16 rounded-full
+            absolute h-20 w-20 rounded-full
             flex items-center justify-center
-            bg-aurora-panel/90 border border-aurora-border/60
-            shadow-inner shadow-aurora-cyan/10
-            transition-all duration-500
-            ${isActive && !reducedMotion ? 'shadow-lg shadow-aurora-cyan/30' : ''}
+            border border-aurora-border/60 bg-[radial-gradient(circle,rgba(0,212,255,0.24),rgba(13,31,60,0.95)_62%)]
+            shadow-inner shadow-aurora-cyan/20 transition-all duration-500
+            ${isActive && !reducedMotion ? 'shadow-[0_0_38px_rgba(0,212,255,0.26)]' : ''}
           `}
           aria-hidden="true"
         >
-          {/* Core glyph */}
           <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
             <polygon
               points="16,4 28,12 28,20 16,28 4,20 4,12"
@@ -71,19 +78,27 @@ export function CognitiveCore() {
             <circle cx="16" cy="16" r="4" className="fill-aurora-cyan/40" />
           </svg>
         </div>
+
+        <div className="absolute inset-x-4 bottom-5 flex justify-between text-[10px] font-mono uppercase tracking-[0.28em] text-aurora-muted" aria-hidden="true">
+          <span>intent</span>
+          <span>voice</span>
+          <span>route</span>
+        </div>
       </div>
 
-      {/* Status label */}
       <div className="text-center">
-        <p className="text-xs font-mono tracking-widest uppercase text-aurora-muted">
+        <p className="text-[11px] font-mono uppercase tracking-[0.34em] text-aurora-muted">
           Cognitive Core
         </p>
         <p
-          className={`text-sm font-mono font-semibold mt-0.5 ${
+          className={`mt-1 text-base font-mono font-semibold ${
             status === 'error' ? 'text-aurora-danger' : 'text-aurora-white'
           }`}
         >
           {label}
+        </p>
+        <p className="mt-1 text-xs font-mono uppercase tracking-[0.24em] text-aurora-cyan/70">
+          {telemetry}
         </p>
       </div>
     </div>

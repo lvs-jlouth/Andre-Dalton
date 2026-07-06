@@ -18,18 +18,27 @@ const NAV_ITEMS: { id: Panel; label: string; shortLabel: string }[] = [
 export function StatusBar() {
   const activePanel = useSettingsStore((s) => s.activePanel);
   const setActivePanel = useSettingsStore((s) => s.setActivePanel);
+  const onHandedLayout = useSettingsStore((s) => s.accessibility.onHandedLayout);
   const status = useAssistantStore((s) => s.status);
 
+  const mobileDockPosition =
+    onHandedLayout === 'left'
+      ? 'justify-start'
+      : onHandedLayout === 'right'
+      ? 'justify-end'
+      : 'justify-center';
+
   return (
-    <header
-      className="sticky top-0 z-50 bg-aurora-panel/90 backdrop-blur-sm border-b border-aurora-border/50"
-      role="banner"
-    >
-      <div className="flex items-center justify-between px-4 py-2 max-w-7xl mx-auto">
+    <>
+      <header
+        className="sticky top-0 z-40 border-b border-aurora-border/50 bg-aurora-panel/90 backdrop-blur-xl"
+        role="banner"
+      >
+      <div className="flex items-center justify-between gap-4 px-4 py-3 max-w-7xl mx-auto">
         {/* Logo / identity */}
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg bg-aurora-cyan/20 border border-aurora-cyan/40 flex items-center justify-center"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-aurora-cyan/40 bg-aurora-cyan/10 shadow-[0_0_24px_rgba(0,212,255,0.18)]"
             aria-hidden="true"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -37,13 +46,18 @@ export function StatusBar() {
               <circle cx="8" cy="8" r="2" fill="#00d4ff" opacity="0.6" />
             </svg>
           </div>
-          <span className="text-sm font-mono font-bold tracking-widest text-aurora-cyan">
-            AURORA
-          </span>
+          <div>
+            <span className="block text-sm font-mono font-bold tracking-[0.32em] text-aurora-cyan">
+              AURORA
+            </span>
+            <span className="hidden text-[11px] font-mono uppercase tracking-[0.24em] text-aurora-muted sm:block">
+              adaptive reasoning interface
+            </span>
+          </div>
         </div>
 
         {/* Navigation */}
-        <nav aria-label="Main navigation">
+        <nav aria-label="Main navigation" className="hidden md:block">
           <ul className="flex gap-1" role="list">
             {NAV_ITEMS.map((item) => (
               <li key={item.id}>
@@ -51,17 +65,15 @@ export function StatusBar() {
                   onClick={() => setActivePanel(item.id)}
                   aria-current={activePanel === item.id ? 'page' : undefined}
                   className={`
-                    px-3 py-1.5 rounded text-xs font-mono tracking-wide
+                    min-h-[40px] rounded-xl border px-3 py-1.5 text-xs font-mono tracking-[0.18em]
                     transition-colors duration-150
                     focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 focus:ring-offset-1 focus:ring-offset-aurora-panel
-                    min-h-[36px]
                     ${activePanel === item.id
-                      ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/40'
+                      ? 'border-aurora-cyan/40 bg-aurora-cyan/20 text-aurora-cyan'
                       : 'text-aurora-muted hover:text-aurora-white hover:bg-aurora-border/20 border border-transparent'}
                   `}
                 >
-                  <span className="hidden sm:inline">{item.label}</span>
-                  <span className="sm:hidden">{item.shortLabel}</span>
+                  {item.label}
                 </button>
               </li>
             ))}
@@ -69,7 +81,7 @@ export function StatusBar() {
         </nav>
 
         {/* Status indicator */}
-        <div aria-live="polite" aria-atomic="true" className="flex items-center gap-2">
+        <div aria-live="polite" aria-atomic="true" className="flex items-center gap-2 rounded-full border border-aurora-border/40 bg-black/10 px-3 py-1.5">
           <span
             className={`w-2 h-2 rounded-full ${
               status === 'idle' ? 'bg-aurora-success' :
@@ -78,12 +90,35 @@ export function StatusBar() {
             }`}
             aria-hidden="true"
           />
-          <span className="text-xs font-mono text-aurora-muted capitalize hidden sm:inline">
+          <span className="hidden text-xs font-mono uppercase tracking-[0.18em] text-aurora-muted sm:inline">
             {status}
           </span>
           <span className="sr-only">AURORA status: {status}</span>
         </div>
       </div>
-    </header>
+      </header>
+
+      <nav
+        aria-label="Mobile navigation"
+        className={`aurora-bottom-safe fixed inset-x-0 bottom-0 z-40 flex px-3 pb-2 pt-2 md:hidden ${mobileDockPosition}`}
+      >
+        <div className="aurora-panel flex max-w-full gap-1 overflow-x-auto rounded-[1.4rem] border border-aurora-border/60 px-2 py-2 backdrop-blur-xl">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActivePanel(item.id)}
+              aria-current={activePanel === item.id ? 'page' : undefined}
+              className={`min-h-[44px] rounded-xl border px-3 text-xs font-mono uppercase tracking-[0.18em] ${
+                activePanel === item.id
+                  ? 'border-aurora-cyan/40 bg-aurora-cyan/20 text-aurora-cyan'
+                  : 'border-transparent bg-transparent text-aurora-muted'
+              }`}
+            >
+              {item.shortLabel}
+            </button>
+          ))}
+        </div>
+      </nav>
+    </>
   );
 }

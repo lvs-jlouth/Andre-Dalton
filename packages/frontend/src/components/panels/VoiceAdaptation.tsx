@@ -4,6 +4,10 @@ import { Button } from '../ui/Button.js';
 import { useSpeechProfileStore } from '../../store/speechProfileStore.js';
 import type { PaceSetting, ClarificationMode } from '../../types/speech.js';
 
+interface VoiceAdaptationProps {
+  compact?: boolean;
+}
+
 const PACE_OPTIONS: { value: PaceSetting; label: string }[] = [
   { value: 'very_slow', label: 'Very slow' },
   { value: 'slow', label: 'Slow' },
@@ -21,7 +25,7 @@ const CLARIFICATION_OPTIONS: { value: ClarificationMode; label: string }[] = [
  * VoiceAdaptation — speech profile editor.
  * Includes wake word configuration (opt-in, default phrase "Hey J").
  */
-export function VoiceAdaptation() {
+export function VoiceAdaptation({ compact = false }: VoiceAdaptationProps) {
   const profile = useSpeechProfileStore((s) => s.profile);
   const updateProfile = useSpeechProfileStore((s) => s.updateProfile);
   const setWakeWord = useSpeechProfileStore((s) => s.setWakeWord);
@@ -61,6 +65,20 @@ export function VoiceAdaptation() {
   return (
     <Panel title="Voice Adaptation" aria-label="Speech profile editor">
       <div className="space-y-6 text-sm">
+        <div className="grid gap-2 sm:grid-cols-3">
+          <div className="rounded-2xl border border-aurora-border/30 bg-black/10 px-3 py-3">
+            <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted">pace</p>
+            <p className="mt-1 font-mono text-aurora-white">{profile.speechPace.replace('_', ' ')}</p>
+          </div>
+          <div className="rounded-2xl border border-aurora-border/30 bg-black/10 px-3 py-3">
+            <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted">clarity</p>
+            <p className="mt-1 font-mono text-aurora-white">{profile.clarificationMode}</p>
+          </div>
+          <div className="rounded-2xl border border-aurora-border/30 bg-black/10 px-3 py-3">
+            <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted">wake phrase</p>
+            <p className="mt-1 truncate font-mono text-aurora-white">{profile.wakeWord.phrase}</p>
+          </div>
+        </div>
 
         {/* ── Wake Word ──────────────────────────────────────────────────── */}
         <section aria-labelledby="wake-word-heading">
@@ -180,6 +198,15 @@ export function VoiceAdaptation() {
             </div>
           </div>
         </section>
+
+        {compact && (
+          <p className="rounded-2xl border border-aurora-border/30 bg-black/10 px-4 py-3 text-xs font-mono text-aurora-muted">
+            Open the dedicated Voice Profile view to manage the full substitution list, vocabulary, and speech preferences.
+          </p>
+        )}
+
+        {!compact && (
+          <>
 
         {/* Divider */}
         <hr className="border-aurora-border/30" />
@@ -366,6 +393,8 @@ export function VoiceAdaptation() {
           <p role="status" className="text-aurora-warn text-xs font-mono">
             ● Unsaved changes — will persist locally in your browser.
           </p>
+        )}
+          </>
         )}
       </div>
     </Panel>

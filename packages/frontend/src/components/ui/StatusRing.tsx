@@ -26,7 +26,6 @@ export function StatusRing({
       title={label}
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {/* Background ring */}
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -35,7 +34,16 @@ export function StatusRing({
           className="stroke-aurora-border/30"
           strokeWidth={2}
         />
-        {/* Active ring */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r * 0.76}
+          fill="none"
+          className="stroke-aurora-cyan/15"
+          strokeWidth={1}
+          strokeDasharray={`${circ * 0.16} ${circ * 0.08}`}
+          transform={`rotate(-70 ${size / 2} ${size / 2})`}
+        />
         <circle
           cx={size / 2}
           cy={size / 2}

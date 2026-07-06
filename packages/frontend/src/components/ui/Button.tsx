@@ -9,9 +9,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-aurora-cyan/20 border-aurora-cyan/60 text-aurora-cyan hover:bg-aurora-cyan/30 focus:ring-aurora-cyan/50',
-  secondary: 'bg-aurora-blue/20 border-aurora-blue/60 text-aurora-blue hover:bg-aurora-blue/30 focus:ring-aurora-blue/50',
-  danger: 'bg-aurora-danger/20 border-aurora-danger/60 text-aurora-danger hover:bg-aurora-danger/30 focus:ring-aurora-danger/50',
+  primary: 'bg-aurora-cyan/15 border-aurora-cyan/60 text-aurora-cyan hover:bg-aurora-cyan/25 focus:ring-aurora-cyan/50 shadow-[0_0_24px_rgba(0,212,255,0.12)]',
+  secondary: 'bg-aurora-blue/15 border-aurora-blue/60 text-aurora-blue hover:bg-aurora-blue/25 focus:ring-aurora-blue/50',
+  danger: 'bg-aurora-danger/15 border-aurora-danger/60 text-aurora-danger hover:bg-aurora-danger/25 focus:ring-aurora-danger/50',
   ghost: 'bg-transparent border-aurora-border text-aurora-muted hover:bg-aurora-border/20 focus:ring-aurora-cyan/30',
 };
 
@@ -40,7 +40,7 @@ export function Button({
       disabled={disabled}
       className={`
         inline-flex items-center justify-center gap-2
-        border rounded-lg font-mono tracking-wide
+        border rounded-2xl font-mono tracking-wide
         transition-all duration-150
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-aurora-bg
         disabled:opacity-40 disabled:cursor-not-allowed

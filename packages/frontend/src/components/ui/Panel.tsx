@@ -15,21 +15,21 @@ export function Panel({ children, title, className = '', role, 'aria-label': ari
       role={role ?? 'region'}
       aria-label={ariaLabel ?? title}
       className={`
-        relative overflow-hidden
-        bg-aurora-panel/80 backdrop-blur-sm
+        aurora-panel relative overflow-hidden
         border border-aurora-border/60
-        rounded-xl shadow-lg shadow-black/40
+        rounded-[1.4rem] backdrop-blur-xl
         ${className}
       `}
     >
       {title && (
-        <header className="px-4 py-2 border-b border-aurora-border/40">
-          <h2 className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-cyan/80">
+        <header className="relative flex items-center justify-between gap-3 border-b border-aurora-border/40 px-4 py-3">
+          <h2 className="text-[11px] font-mono font-semibold uppercase tracking-[0.34em] text-aurora-cyan/80">
             {title}
           </h2>
+          <span className="h-px flex-1 bg-gradient-to-r from-aurora-cyan/40 to-transparent" aria-hidden="true" />
         </header>
       )}
-      <div className="p-4">{children}</div>
+      <div className="relative p-4">{children}</div>
     </section>
   );
 }

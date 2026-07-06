@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useSettingsStore } from '../../store/settingsStore.js';
+import { AccessibilityDock } from './AccessibilityDock.js';
 
 interface HUDLayoutProps {
   children: ReactNode;
@@ -11,21 +12,32 @@ interface HUDLayoutProps {
  * and provides the HUD grid background.
  */
 export function HUDLayout({ children }: HUDLayoutProps) {
-  const { highContrast, reducedMotion, largeText, fontScale } = useSettingsStore((s) => s.accessibility);
+  const { highContrast, reducedMotion, largeText, fontScale, onHandedLayout } = useSettingsStore((s) => s.accessibility);
 
   return (
     <div
       className={`
-        min-h-screen w-full
-        bg-aurora-bg
-        bg-grid-hud bg-grid-hud
+        aurora-shell aurora-mobile-safe min-h-screen w-full
+        bg-aurora-bg bg-grid-hud
         text-aurora-white
-        ${highContrast ? 'contrast-more' : ''}
-        ${reducedMotion ? 'motion-reduce' : ''}
+        ${highContrast ? 'aurora-high-contrast' : ''}
+        ${reducedMotion ? 'aurora-reduced-motion' : ''}
         ${largeText ? 'text-base' : 'text-sm'}
       `}
-      style={{ fontSize: `${fontScale}rem` }}
+      style={{
+        fontSize: `${fontScale}rem`,
+        backgroundPosition: onHandedLayout === 'left' ? '-10px 0' : onHandedLayout === 'right' ? '10px 0' : '0 0',
+      }}
     >
+      <div
+        className="pointer-events-none fixed inset-0 opacity-70"
+        aria-hidden="true"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 0%, rgba(0,212,255,0.10), transparent 28%), radial-gradient(circle at 15% 30%, rgba(0,128,255,0.12), transparent 22%), radial-gradient(circle at 85% 25%, rgba(0,181,165,0.10), transparent 18%)',
+        }}
+      />
+
       {/* Subtle scanline overlay — hidden in reduced motion mode */}
       {!reducedMotion && (
         <div
@@ -40,6 +52,7 @@ export function HUDLayout({ children }: HUDLayoutProps) {
       <div className="relative z-10">
         {children}
       </div>
+      <AccessibilityDock />
     </div>
   );
 }

@@ -11,13 +11,15 @@ import { useSettingsStore } from '../../store/settingsStore.js';
 export function DialogueLedger() {
   const conversation = useAssistantStore((s) => s.conversation);
   const currentCaption = useAssistantStore((s) => s.currentCaption);
+  const lastResponse = useAssistantStore((s) => s.lastResponse);
   const captions = useSettingsStore((s) => s.accessibility.captions);
   const fontScale = useSettingsStore((s) => s.accessibility.fontScale);
+  const reducedMotion = useSettingsStore((s) => s.accessibility.reducedMotion);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [conversation, currentCaption]);
+    bottomRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+  }, [conversation, currentCaption, reducedMotion]);
 
   return (
     <Panel
@@ -27,12 +29,22 @@ export function DialogueLedger() {
       aria-relevant="additions"
       className="flex flex-col"
     >
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted">
+        <span className="rounded-full border border-aurora-border/30 bg-black/10 px-3 py-1.5">
+          captions {captions ? 'online' : 'off'}
+        </span>
+        {lastResponse && (
+          <span className="rounded-full border border-aurora-cyan/20 bg-aurora-cyan/10 px-3 py-1.5 text-aurora-cyan">
+            {lastResponse.providerId} / {lastResponse.model}
+          </span>
+        )}
+      </div>
       <div
-        className="h-64 overflow-y-auto space-y-3 pr-1 scrollbar-thin"
+        className="h-[26rem] space-y-3 overflow-y-auto pr-1 scrollbar-thin"
         style={{ fontSize: `${fontScale}rem` }}
       >
         {conversation.length === 0 && (
-          <p className="text-aurora-muted/60 text-sm font-mono italic">
+          <p className="rounded-2xl border border-dashed border-aurora-border/30 bg-black/10 px-4 py-5 text-sm font-mono italic text-aurora-muted/70">
             Say something or type a message below to begin.
           </p>
         )}
@@ -47,13 +59,16 @@ export function DialogueLedger() {
             </span>
             <div
               className={`
-                max-w-[85%] px-3 py-2 rounded-xl text-sm
+                max-w-[88%] rounded-2xl px-4 py-3 text-sm shadow-[0_16px_32px_rgba(0,0,0,0.18)]
                 ${turn.role === 'user'
-                  ? 'bg-aurora-blue/20 border border-aurora-blue/30 text-aurora-white rounded-br-sm'
-                  : 'bg-aurora-teal/10 border border-aurora-teal/20 text-aurora-white rounded-bl-sm'}
+                  ? 'border border-aurora-blue/30 bg-aurora-blue/15 text-aurora-white rounded-br-md'
+                  : 'border border-aurora-teal/25 bg-aurora-teal/10 text-aurora-white rounded-bl-md'}
               `}
             >
               {turn.content}
+              <div className="mt-2 text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted/80">
+                {new Date(turn.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
             </div>
           </div>
         ))}
@@ -67,7 +82,7 @@ export function DialogueLedger() {
             className="flex items-start gap-2"
           >
             <span className="text-aurora-muted text-xs font-mono">AURORA</span>
-            <div className="bg-aurora-cyan/10 border border-aurora-cyan/20 px-3 py-2 rounded-xl text-sm text-aurora-cyan/90 italic">
+            <div className="rounded-2xl border border-aurora-cyan/25 bg-aurora-cyan/10 px-4 py-3 text-sm italic text-aurora-cyan/90">
               {currentCaption}
               <span className="animate-pulse ml-1">▋</span>
             </div>

@@ -95,6 +95,18 @@ export function IntentConsole() {
   return (
     <Panel title="Intent Console" aria-label="Command input panel">
       <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-3 gap-2 text-[10px] font-mono uppercase tracking-[0.24em] text-aurora-muted">
+          <div className="rounded-2xl border border-aurora-border/30 bg-black/10 px-3 py-2">
+            input
+          </div>
+          <div className={`rounded-2xl border px-3 py-2 ${isListening ? 'border-aurora-cyan/30 bg-aurora-cyan/10 text-aurora-cyan' : 'border-aurora-border/30 bg-black/10'}`}>
+            {isListening ? 'live mic' : 'standby'}
+          </div>
+          <div className={`rounded-2xl border px-3 py-2 ${isBusy ? 'border-aurora-blue/30 bg-aurora-blue/10 text-aurora-blue' : 'border-aurora-border/30 bg-black/10'}`}>
+            {isBusy ? 'routing' : 'ready'}
+          </div>
+        </div>
+
         {/* Wake word status strip — only shown when wake word is enabled */}
         {wakeWordConfig.enabled && (
           <div
@@ -102,7 +114,7 @@ export function IntentConsole() {
             aria-live="polite"
             aria-atomic="true"
             className={`
-              flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono
+              flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-mono
               border transition-colors duration-300
               ${wakeStatus === 'monitoring'
                 ? 'bg-aurora-teal/10 border-aurora-teal/30 text-aurora-teal'
@@ -162,7 +174,7 @@ export function IntentConsole() {
         )}
 
         {/* Text input row */}
-        <div className="flex gap-2 items-center">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <label htmlFor="aurora-input" className="sr-only">
             Message to AURORA
           </label>
@@ -183,7 +195,7 @@ export function IntentConsole() {
             spellCheck={false}
             className="
               flex-1 bg-aurora-bg/60 border border-aurora-border/60
-              rounded-lg px-3 py-2 text-sm font-mono text-aurora-white
+              rounded-2xl px-4 py-3 text-sm font-mono text-aurora-white
               placeholder:text-aurora-muted/50
               focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50
               disabled:opacity-50
@@ -191,28 +203,30 @@ export function IntentConsole() {
             "
           />
 
-          {/* Push-to-talk */}
-          <Button
-            variant={isListening ? 'danger' : 'secondary'}
-            size={btnSize}
-            onClick={toggleListening}
-            disabled={isBusy}
-            aria-label={isListening ? 'Stop listening' : 'Push to talk — start listening'}
-            aria-pressed={isListening}
-          >
-            {isListening ? '⏹ Stop' : '🎙 Talk'}
-          </Button>
+          <div className="grid grid-cols-2 gap-2 sm:flex">
+            <Button
+             variant={isListening ? 'danger' : 'secondary'}
+             size={btnSize}
+             onClick={toggleListening}
+             disabled={isBusy}
+             aria-label={isListening ? 'Stop listening' : 'Push to talk — start listening'}
+             aria-pressed={isListening}
+             className="justify-center"
+            >
+             {isListening ? '⏹ Stop' : '🎙 Talk'}
+            </Button>
 
-          {/* Send */}
-          <Button
-            variant="primary"
-            size={btnSize}
-            onClick={() => void handleSubmit()}
-            disabled={!inputText.trim() || isBusy}
-            aria-label="Send message"
-          >
-            {isThinking ? '⏳' : '→'}
-          </Button>
+            <Button
+             variant="primary"
+             size={btnSize}
+             onClick={() => void handleSubmit()}
+             disabled={!inputText.trim() || isBusy}
+             aria-label="Send message"
+             className="justify-center"
+            >
+             {isThinking ? 'Routing…' : 'Send'}
+            </Button>
+          </div>
         </div>
       </div>
     </Panel>

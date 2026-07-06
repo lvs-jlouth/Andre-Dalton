@@ -43,19 +43,59 @@ export default function App() {
 
 function DashboardView() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      {/* Left column */}
-      <div className="space-y-4">
-        <div className="flex justify-center py-4">
-          <CognitiveCore />
-        </div>
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+      <div className="space-y-4 xl:col-span-3">
+        <section className="aurora-panel relative overflow-hidden rounded-[1.8rem] border border-aurora-border/60 px-5 py-6">
+          <div className="absolute inset-0 bg-panel-grid opacity-[0.08]" aria-hidden="true" />
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center xl:flex-col xl:items-stretch">
+            <div className="flex justify-center sm:flex-1 xl:justify-start">
+              <CognitiveCore />
+            </div>
+            <div className="space-y-3 sm:flex-1">
+              <div>
+                <p className="text-[11px] font-mono uppercase tracking-[0.34em] text-aurora-cyan/80">
+                  Cognitive Deck
+                </p>
+                <h1 className="mt-2 text-2xl font-semibold text-aurora-white sm:text-3xl">
+                  Original adaptive HUD for live conversation control.
+                </h1>
+                <p className="mt-2 max-w-md text-sm text-aurora-muted">
+                  AURORA balances routed models, voice-aware interaction, and captioned dialogue inside a dark glass command surface.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center font-mono text-xs uppercase tracking-[0.24em]">
+                <div className="rounded-2xl border border-aurora-border/40 bg-black/10 px-3 py-3 text-aurora-cyan">
+                  core
+                </div>
+                <div className="rounded-2xl border border-aurora-border/40 bg-black/10 px-3 py-3 text-aurora-teal">
+                  voice
+                </div>
+                <div className="rounded-2xl border border-aurora-border/40 bg-black/10 px-3 py-3 text-aurora-blue">
+                  router
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <SystemsStream />
       </div>
 
-      {/* Main column */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="space-y-4 xl:col-span-6">
         <DialogueLedger />
-        <IntentConsole />
+        <div className="xl:hidden">
+          <ModelRouter compact />
+        </div>
+        <div className="xl:hidden">
+          <VoiceAdaptation compact />
+        </div>
+        <div className="sticky bottom-24 z-20">
+          <IntentConsole />
+        </div>
+      </div>
+
+      <div className="hidden space-y-4 xl:col-span-3 xl:block">
+        <ModelRouter />
+        <VoiceAdaptation compact />
       </div>
     </div>
   );

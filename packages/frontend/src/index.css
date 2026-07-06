@@ -6,11 +6,35 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --aurora-shell: #07101f;
+    --aurora-shell-glow: rgba(0, 212, 255, 0.18);
+    --aurora-safe-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   html {
     scroll-behavior: smooth;
+    background:
+      radial-gradient(circle at top, rgba(0, 128, 255, 0.18), transparent 34%),
+      radial-gradient(circle at 80% 15%, rgba(0, 212, 255, 0.16), transparent 28%),
+      linear-gradient(180deg, #06101d 0%, #071526 35%, #050c17 100%);
   }
+
+   body,
+   #root {
+    min-height: 100vh;
+   }
+
+   body {
+    margin: 0;
+    background: transparent;
+    color: #e8f4ff;
+    font-family: Inter, system-ui, sans-serif;
+   }
+
+   ::selection {
+    background: rgba(0, 212, 255, 0.24);
+    color: #f5fbff;
+   }
 
   /* Respect prefers-reduced-motion at the browser level */
   @media (prefers-reduced-motion: reduce) {
@@ -48,5 +72,84 @@
   :focus-visible {
     outline: 2px solid #00d4ff;
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .aurora-shell {
+    background:
+      radial-gradient(circle at top, rgba(0, 212, 255, 0.08), transparent 24%),
+      linear-gradient(180deg, rgba(7, 16, 31, 0.96), rgba(5, 12, 23, 0.98));
+  }
+
+  .aurora-panel {
+    background:
+      linear-gradient(180deg, rgba(11, 25, 46, 0.92), rgba(7, 17, 32, 0.9)),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 55%);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 0 1px rgba(0, 212, 255, 0.06);
+  }
+
+  .aurora-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba(0, 212, 255, 0.12), transparent 35%),
+      linear-gradient(315deg, rgba(255, 255, 255, 0.03), transparent 30%);
+    opacity: 0.9;
+  }
+
+  .aurora-panel::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .aurora-high-contrast {
+    background:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 18%),
+      linear-gradient(180deg, #02060d 0%, #000000 100%);
+  }
+
+  .aurora-high-contrast .aurora-panel {
+    background: rgba(0, 0, 0, 0.94);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.36),
+      0 24px 60px rgba(0, 0, 0, 0.7);
+  }
+
+  .aurora-high-contrast .text-aurora-muted {
+    color: #d8ecff !important;
+  }
+
+  .aurora-high-contrast .border-aurora-border\/60,
+  .aurora-high-contrast .border-aurora-border\/50,
+  .aurora-high-contrast .border-aurora-border\/40,
+  .aurora-high-contrast .border-aurora-border\/30,
+  .aurora-high-contrast .border-aurora-border\/20 {
+    border-color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .aurora-reduced-motion *,
+  .aurora-reduced-motion *::before,
+  .aurora-reduced-motion *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .aurora-mobile-safe {
+    padding-bottom: calc(6rem + var(--aurora-safe-bottom));
+  }
+
+  .aurora-bottom-safe {
+    padding-bottom: calc(0.5rem + var(--aurora-safe-bottom));
   }
 }
