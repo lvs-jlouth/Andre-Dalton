@@ -32,6 +32,25 @@ export interface WakeWordConfig {
   sensitivity: number;
 }
 
+export interface SpeechTrainingAttempt {
+  promptId: string;
+  expectedText: string;
+  spokenText: string;
+  confidence: number;
+  matchScore: number;
+  recordedAt: string;
+}
+
+export interface SpeechTrainingSession {
+  id: string;
+  startedAt: string;
+  completedAt: string;
+  promptsCompleted: number;
+  averageConfidence: number;
+  averageMatchScore: number;
+  attempts: SpeechTrainingAttempt[];
+}
+
 export interface SpeechProfile {
   /** Unique profile identifier (UUID in production) */
   id: string;
@@ -57,6 +76,10 @@ export interface SpeechProfile {
   consentLocalLearning: boolean;
   /** Wake word configuration (opt-in) */
   wakeWord: WakeWordConfig;
+  /** Guided practice sessions stored for local speech adaptation */
+  trainingSessions: SpeechTrainingSession[];
+  /** ISO 8601 timestamp of the most recent completed training session */
+  lastTrainingAt: string | null;
   /** ISO 8601 timestamp of last update */
   updatedAt: string;
 }
@@ -78,11 +101,23 @@ const DEFAULT_PROFILE: SpeechProfile = {
     phrase: 'Hey J',
     sensitivity: 0.75,
   },
+  trainingSessions: [],
+  lastTrainingAt: null,
   updatedAt: new Date().toISOString(),
 };
 
 export function getDefaultSpeechProfile(): SpeechProfile {
-  return { ...DEFAULT_PROFILE };
+  return {
+    ...DEFAULT_PROFILE,
+    substitutions: [...DEFAULT_PROFILE.substitutions],
+    customVocabulary: [...DEFAULT_PROFILE.customVocabulary],
+    commandAliases: { ...DEFAULT_PROFILE.commandAliases },
+    wakeWord: { ...DEFAULT_PROFILE.wakeWord },
+    trainingSessions: DEFAULT_PROFILE.trainingSessions.map((session) => ({
+      ...session,
+      attempts: session.attempts.map((attempt) => ({ ...attempt })),
+    })),
+  };
 }
 
 export interface ProfileValidationResult {
@@ -169,6 +204,93 @@ export function validateSpeechProfile(raw: unknown): ProfileValidationResult {
     }
   }
 
+  if (data['trainingSessions'] !== undefined) {
+    const sessions = data['trainingSessions'];
+    if (!Array.isArray(sessions)) {
+      errors.push('trainingSessions must be an array');
+    } else {
+      sessions.forEach((session, sessionIndex) => {
+        if (!session || typeof session !== 'object') {
+          errors.push(`trainingSessions[${sessionIndex}] must be an object`);
+          return;
+        }
+
+        const sessionData = session as Record<string, unknown>;
+        const sessionPath = `trainingSessions[${sessionIndex}]`;
+        const numericFields = ['promptsCompleted', 'averageConfidence', 'averageMatchScore'] as const;
+        const stringFields = ['id', 'startedAt', 'completedAt'] as const;
+
+        for (const field of stringFields) {
+          if (typeof sessionData[field] !== 'string') {
+            errors.push(`${sessionPath}.${field} must be a string`);
+          }
+        }
+
+        for (const field of numericFields) {
+          if (typeof sessionData[field] !== 'number') {
+            errors.push(`${sessionPath}.${field} must be a number`);
+          }
+        }
+
+        if (
+          typeof sessionData['averageConfidence'] === 'number' &&
+          (sessionData['averageConfidence'] < 0 || sessionData['averageConfidence'] > 1)
+        ) {
+          errors.push(`${sessionPath}.averageConfidence must be a number between 0 and 1`);
+        }
+
+        if (
+          typeof sessionData['averageMatchScore'] === 'number' &&
+          (sessionData['averageMatchScore'] < 0 || sessionData['averageMatchScore'] > 1)
+        ) {
+          errors.push(`${sessionPath}.averageMatchScore must be a number between 0 and 1`);
+        }
+
+        if (!Array.isArray(sessionData['attempts'])) {
+          errors.push(`${sessionPath}.attempts must be an array`);
+          return;
+        }
+
+        sessionData['attempts'].forEach((attempt, attemptIndex) => {
+          if (!attempt || typeof attempt !== 'object') {
+            errors.push(`${sessionPath}.attempts[${attemptIndex}] must be an object`);
+            return;
+          }
+
+          const attemptData = attempt as Record<string, unknown>;
+          const attemptPath = `${sessionPath}.attempts[${attemptIndex}]`;
+          const attemptStringFields = ['promptId', 'expectedText', 'spokenText', 'recordedAt'] as const;
+
+          for (const field of attemptStringFields) {
+            if (typeof attemptData[field] !== 'string') {
+              errors.push(`${attemptPath}.${field} must be a string`);
+            }
+          }
+
+          if (
+            typeof attemptData['confidence'] !== 'number' ||
+            attemptData['confidence'] < 0 ||
+            attemptData['confidence'] > 1
+          ) {
+            errors.push(`${attemptPath}.confidence must be a number between 0 and 1`);
+          }
+
+          if (
+            typeof attemptData['matchScore'] !== 'number' ||
+            attemptData['matchScore'] < 0 ||
+            attemptData['matchScore'] > 1
+          ) {
+            errors.push(`${attemptPath}.matchScore must be a number between 0 and 1`);
+          }
+        });
+      });
+    }
+  }
+
+  if (data['lastTrainingAt'] !== undefined && data['lastTrainingAt'] !== null && typeof data['lastTrainingAt'] !== 'string') {
+    errors.push('lastTrainingAt must be a string or null');
+  }
+
   return { valid: errors.length === 0, errors: errors.length ? errors : undefined };
 }
 
@@ -176,18 +298,52 @@ export function validateSpeechProfile(raw: unknown): ProfileValidationResult {
  * Merges a validated raw payload over the default profile.
  * Caller must run validateSpeechProfile first.
  */
-export function parseSpeechProfile(raw: unknown): SpeechProfile {
+export function parseSpeechProfile(
+  raw: unknown,
+  baseProfile: SpeechProfile = getDefaultSpeechProfile(),
+): SpeechProfile {
   const base = getDefaultSpeechProfile();
+  const startingProfile = {
+    ...base,
+    ...baseProfile,
+    substitutions: [...baseProfile.substitutions],
+    customVocabulary: [...baseProfile.customVocabulary],
+    commandAliases: { ...baseProfile.commandAliases },
+    wakeWord: { ...base.wakeWord, ...baseProfile.wakeWord },
+    trainingSessions: baseProfile.trainingSessions.map((session) => ({
+      ...session,
+      attempts: session.attempts.map((attempt) => ({ ...attempt })),
+    })),
+  };
   const data = (raw ?? {}) as Partial<SpeechProfile>;
 
   return {
-    ...base,
+    ...startingProfile,
     ...data,
     // Deep-merge wakeWord so partial updates (e.g. only phrase) don't wipe other fields
     wakeWord: {
-      ...base.wakeWord,
+      ...startingProfile.wakeWord,
       ...(data.wakeWord ?? {}),
     },
+    trainingSessions: Array.isArray(data.trainingSessions)
+      ? data.trainingSessions.map((session) => ({
+          ...session,
+          attempts: session.attempts.map((attempt) => ({ ...attempt })),
+        })).slice(-25)
+      : startingProfile.trainingSessions,
+    lastTrainingAt: data.lastTrainingAt ?? startingProfile.lastTrainingAt,
     updatedAt: new Date().toISOString(),
+  };
+}
+
+export function sanitizeSpeechProfileForStorage(profile: SpeechProfile): SpeechProfile {
+  return {
+    ...profile,
+    preferredName: profile.consentLocalLearning ? profile.preferredName : DEFAULT_PROFILE.preferredName,
+    substitutions: profile.consentStoringCorrections ? profile.substitutions : [],
+    customVocabulary: profile.consentLocalLearning ? profile.customVocabulary : [],
+    commandAliases: profile.consentLocalLearning ? profile.commandAliases : {},
+    trainingSessions: profile.consentLocalLearning ? profile.trainingSessions.slice(-25) : [],
+    lastTrainingAt: profile.consentLocalLearning ? profile.lastTrainingAt : null,
   };
 }

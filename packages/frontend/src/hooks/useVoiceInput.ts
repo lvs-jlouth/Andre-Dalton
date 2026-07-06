@@ -10,10 +10,15 @@ interface UseVoiceInputOptions {
 
 export function useVoiceInput({ onResult }: UseVoiceInputOptions = {}) {
   const adapterRef = useRef<STTAdapter | null>(null);
+  const onResultRef = useRef(onResult);
   const [sttStatus, setSTTStatus] = useState<STTStatus>('idle');
   const [partialTranscript, setPartialTranscript] = useState('');
   const setAssistantStatus = useAssistantStore((s) => s.setStatus);
   const profile = useSpeechProfileStore((s) => s.profile);
+
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
   useEffect(() => {
     const adapter = createSTTAdapter('browser');
@@ -31,7 +36,7 @@ export function useVoiceInput({ onResult }: UseVoiceInputOptions = {}) {
 
     adapter.onFinalResult = (result) => {
       setPartialTranscript('');
-      onResult?.(result);
+      onResultRef.current?.(result);
     };
 
     adapter.onError = (err) => {

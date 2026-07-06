@@ -34,6 +34,8 @@ export interface AppEnv {
   // Privacy
   DEBUG_MODE: boolean;
   PERSIST_TRANSCRIPTS: boolean;
+  PROFILE_STORAGE_DIR: string;
+  PROFILE_ENCRYPTION_KEY?: string;
 }
 
 let _env: AppEnv | null = null;
@@ -68,6 +70,8 @@ export function getEnv(): AppEnv {
 
     DEBUG_MODE: process.env['DEBUG_MODE'] === 'true',
     PERSIST_TRANSCRIPTS: process.env['PERSIST_TRANSCRIPTS'] === 'true',
+    PROFILE_STORAGE_DIR: process.env['PROFILE_STORAGE_DIR'] ?? '.aurora-private',
+    PROFILE_ENCRYPTION_KEY: process.env['PROFILE_ENCRYPTION_KEY'] || undefined,
   };
 
   return _env;

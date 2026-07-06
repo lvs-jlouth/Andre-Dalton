@@ -19,6 +19,25 @@ export interface WakeWordConfig {
   sensitivity: number;
 }
 
+export interface SpeechTrainingAttempt {
+  promptId: string;
+  expectedText: string;
+  spokenText: string;
+  confidence: number;
+  matchScore: number;
+  recordedAt: string;
+}
+
+export interface SpeechTrainingSession {
+  id: string;
+  startedAt: string;
+  completedAt: string;
+  promptsCompleted: number;
+  averageConfidence: number;
+  averageMatchScore: number;
+  attempts: SpeechTrainingAttempt[];
+}
+
 export interface SpeechProfile {
   id: string;
   preferredName: string;
@@ -33,6 +52,8 @@ export interface SpeechProfile {
   consentLocalLearning: boolean;
   /** Wake word / wake phrase configuration */
   wakeWord: WakeWordConfig;
+  trainingSessions: SpeechTrainingSession[];
+  lastTrainingAt: string | null;
   updatedAt: string;
 }
 

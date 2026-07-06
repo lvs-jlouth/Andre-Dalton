@@ -110,6 +110,8 @@ describe('speechProfileStore', () => {
           phrase: 'Hey J',
           sensitivity: 0.75,
         },
+        trainingSessions: [],
+        lastTrainingAt: null,
         updatedAt: new Date().toISOString(),
       },
       isDirty: false,
@@ -199,11 +201,63 @@ describe('speechProfileStore', () => {
       customVocabulary: ['secret phrase'],
       commandAliases: { unlock: 'open the front door' },
       substitutions: [{ heard: 'locks', intended: 'locks' }],
+      trainingSessions: [
+        {
+          id: 'session-1',
+          startedAt: '2024-01-01T00:00:00.000Z',
+          completedAt: '2024-01-01T00:10:00.000Z',
+          promptsCompleted: 1,
+          averageConfidence: 0.8,
+          averageMatchScore: 0.9,
+          attempts: [
+            {
+              promptId: 'prompt-1',
+              expectedText: 'Please bring my notebook.',
+              spokenText: 'Please bring my notebook.',
+              confidence: 0.8,
+              matchScore: 1,
+              recordedAt: '2024-01-01T00:05:00.000Z',
+            },
+          ],
+        },
+      ],
+      lastTrainingAt: '2024-01-01T00:10:00.000Z',
     });
 
     const raw = localStorage.getItem('aurora-speech-profile');
     expect(raw).not.toContain('secret phrase');
     expect(raw).not.toContain('open the front door');
     expect(raw).not.toContain('Andre');
+    expect(raw).not.toContain('Please bring my notebook.');
+  });
+
+  it('replaceProfile hydrates remote profile and clears dirty state', () => {
+    useSpeechProfileStore.getState().updateProfile({ preferredName: 'Draft' });
+    useSpeechProfileStore.getState().replaceProfile({
+      id: 'remote',
+      preferredName: 'Andre',
+      speechPace: 'slow',
+      pauseToleranceMs: 3000,
+      substitutions: [],
+      customVocabulary: ['AURORA'],
+      commandAliases: {},
+      clarificationMode: 'moderate',
+      confirmationThreshold: 0.6,
+      consentStoringCorrections: false,
+      consentLocalLearning: true,
+      wakeWord: {
+        enabled: true,
+        phrase: 'Go time',
+        sensitivity: 0.8,
+      },
+      trainingSessions: [],
+      lastTrainingAt: null,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const state = useSpeechProfileStore.getState();
+    expect(state.profile.preferredName).toBe('Andre');
+    expect(state.profile.wakeWord.phrase).toBe('Go time');
+    expect(state.isDirty).toBe(false);
   });
 });

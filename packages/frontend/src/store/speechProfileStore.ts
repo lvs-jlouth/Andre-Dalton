@@ -19,6 +19,8 @@ const DEFAULT_PROFILE: SpeechProfile = {
     phrase: 'Hey J',
     sensitivity: 0.75,
   },
+  trainingSessions: [],
+  lastTrainingAt: null,
   updatedAt: new Date().toISOString(),
 };
 
@@ -27,6 +29,7 @@ interface SpeechProfileState {
   isDirty: boolean;
 
   updateProfile: (patch: Partial<SpeechProfile>) => void;
+  replaceProfile: (profile: SpeechProfile) => void;
   addSubstitution: (heard: string, intended: string) => void;
   removeSubstitution: (heard: string) => void;
   addVocabularyWord: (word: string) => void;
@@ -45,6 +48,8 @@ function getPersistedProfile(profile: SpeechProfile): SpeechProfile {
     substitutions: profile.consentStoringCorrections ? profile.substitutions : [],
     customVocabulary: profile.consentLocalLearning ? profile.customVocabulary : [],
     commandAliases: profile.consentLocalLearning ? profile.commandAliases : {},
+    trainingSessions: profile.consentLocalLearning ? profile.trainingSessions : [],
+    lastTrainingAt: profile.consentLocalLearning ? profile.lastTrainingAt : null,
   };
 }
 
@@ -56,9 +61,27 @@ export const useSpeechProfileStore = create<SpeechProfileState>()(
 
       updateProfile: (patch) =>
         set((state) => ({
-          profile: { ...state.profile, ...patch, updatedAt: new Date().toISOString() },
+          profile: {
+            ...state.profile,
+            ...patch,
+            wakeWord: { ...state.profile.wakeWord, ...(patch.wakeWord ?? {}) },
+            updatedAt: new Date().toISOString(),
+          },
           isDirty: true,
         })),
+
+      replaceProfile: (profile) =>
+        set({
+          profile: {
+            ...profile,
+            wakeWord: { ...DEFAULT_PROFILE.wakeWord, ...profile.wakeWord },
+            trainingSessions: profile.trainingSessions.map((session) => ({
+              ...session,
+              attempts: session.attempts.map((attempt) => ({ ...attempt })),
+            })),
+          },
+          isDirty: false,
+        }),
 
       addSubstitution: (heard, intended) =>
         set((state) => ({

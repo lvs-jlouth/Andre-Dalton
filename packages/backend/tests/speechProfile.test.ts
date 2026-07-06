@@ -18,13 +18,17 @@ describe('getDefaultSpeechProfile', () => {
     expect(profile.clarificationMode).toBe('moderate');
     expect(profile.confirmationThreshold).toBe(0.6);
     expect(profile.consentStoringCorrections).toBe(false);
+    expect(profile.trainingSessions).toEqual([]);
+    expect(profile.lastTrainingAt).toBeNull();
   });
 
   it('returns independent copies — mutation does not affect the module', () => {
     const a = getDefaultSpeechProfile();
     const b = getDefaultSpeechProfile();
     a.preferredName = 'Andre';
+    a.wakeWord.phrase = 'Go time';
     expect(b.preferredName).toBe('User');
+    expect(b.wakeWord.phrase).toBe('Hey J');
   });
 });
 
@@ -87,6 +91,53 @@ describe('validateSpeechProfile', () => {
     expect(validateSpeechProfile('string').valid).toBe(false);
     expect(validateSpeechProfile(42).valid).toBe(false);
   });
+
+  it('accepts valid training session history', () => {
+    const result = validateSpeechProfile({
+      trainingSessions: [
+        {
+          id: 'session-1',
+          startedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          promptsCompleted: 1,
+          averageConfidence: 0.9,
+          averageMatchScore: 0.85,
+          attempts: [
+            {
+              promptId: 'prompt-1',
+              expectedText: 'She sells seashells by the seashore.',
+              spokenText: 'She sells seashells by the sea shore.',
+              confidence: 0.92,
+              matchScore: 0.88,
+              recordedAt: new Date().toISOString(),
+            },
+          ],
+        },
+      ],
+      lastTrainingAt: new Date().toISOString(),
+    });
+
+    expect(result.valid).toBe(true);
+  });
+
+  it('rejects invalid training session history', () => {
+    const result = validateSpeechProfile({
+      trainingSessions: [
+        {
+          id: 'session-1',
+          startedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          promptsCompleted: 1,
+          averageConfidence: 2,
+          averageMatchScore: 0.85,
+          attempts: [],
+        },
+      ],
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.errors?.some((error) => error.includes('averageConfidence'))).toBe(true);
+  });
 });
 
 describe('parseSpeechProfile', () => {
@@ -145,6 +196,40 @@ describe('parseSpeechProfile', () => {
   it('defaults wakeWord.phrase to "Hey J"', () => {
     const profile = parseSpeechProfile({});
     expect(profile.wakeWord.phrase).toBe('Hey J');
+  });
+
+  it('merges updates over an existing profile', () => {
+    const existing = parseSpeechProfile({
+      preferredName: 'Andre',
+      trainingSessions: [
+        {
+          id: 'session-1',
+          startedAt: '2024-01-01T00:00:00.000Z',
+          completedAt: '2024-01-01T00:10:00.000Z',
+          promptsCompleted: 1,
+          averageConfidence: 0.8,
+          averageMatchScore: 0.75,
+          attempts: [
+            {
+              promptId: 'prompt-1',
+              expectedText: 'Bright birds build blue nests.',
+              spokenText: 'Bright birds build blue nests.',
+              confidence: 0.8,
+              matchScore: 1,
+              recordedAt: '2024-01-01T00:05:00.000Z',
+            },
+          ],
+        },
+      ],
+      lastTrainingAt: '2024-01-01T00:10:00.000Z',
+    });
+
+    const profile = parseSpeechProfile({ speechPace: 'slow' }, existing);
+
+    expect(profile.preferredName).toBe('Andre');
+    expect(profile.speechPace).toBe('slow');
+    expect(profile.trainingSessions).toHaveLength(1);
+    expect(profile.lastTrainingAt).toBe('2024-01-01T00:10:00.000Z');
   });
 });
 
