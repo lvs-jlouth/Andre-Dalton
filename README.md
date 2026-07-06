@@ -165,6 +165,7 @@ The **Voice Adaptation** profile stores:
 - Clarification mode (aggressive vs. relaxed inference)
 - Custom vocabulary and command aliases
 - Substitution list ("what I say" → "what I mean")
+- Guided speech-training session history with prompt-match/confidence summaries
 - Confirmation threshold for risky actions
 - Wake word configuration
 - Consent flags for local speech learning
@@ -192,6 +193,7 @@ Disfluencies are treated as **normal variation**, not errors.
 - Disabling transcript retention clears previously stored local transcripts
 - Speech profile corrections are only stored locally when `consentStoringCorrections: true`
 - Sensitive speech-profile learning fields are only persisted when the matching consent toggles are enabled
+- Saved speech profiles are encrypted at rest in the local backend storage directory
 - No analytics, telemetry, or third-party tracking
 
 ---

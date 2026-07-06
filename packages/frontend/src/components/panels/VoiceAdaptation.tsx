@@ -160,6 +160,7 @@ export function VoiceAdaptation({ compact = false }: VoiceAdaptationProps) {
   }
 
   function cancelTrainingSession() {
+    stopListening();
     setSessionActive(false);
     setSessionStartedAt(null);
     setCurrentPromptIndex(0);
@@ -184,7 +185,12 @@ export function VoiceAdaptation({ compact = false }: VoiceAdaptationProps) {
 
   async function finishTrainingSession() {
     if (!sessionStartedAt || draftAttempts.length === 0) {
+      stopListening();
       setSessionActive(false);
+      setSessionStartedAt(null);
+      setCurrentPromptIndex(0);
+      setDraftAttempts([]);
+      setCapturedPromptIds([]);
       return;
     }
 
@@ -214,6 +220,7 @@ export function VoiceAdaptation({ compact = false }: VoiceAdaptationProps) {
       trainingSessions: nextProfile.trainingSessions,
       lastTrainingAt: completedAt,
     });
+    stopListening();
     setSessionActive(false);
     setSessionStartedAt(null);
     setCurrentPromptIndex(0);
