@@ -22,7 +22,6 @@ export class BrowserSTTAdapter implements STTAdapter {
   private recognition: SpeechRecognition | null = null;
   private status: STTStatus = 'idle';
   private silenceTimer: ReturnType<typeof setTimeout> | null = null;
-  private partialBuffer = '';
   private pauseToleranceMs = 2000;
 
   private setStatus(s: STTStatus) {
@@ -31,7 +30,7 @@ export class BrowserSTTAdapter implements STTAdapter {
   }
 
   start(options?: STTStartOptions): void {
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
       this.onError?.('SpeechRecognition is not supported in this browser');
       this.setStatus('error');
       return;
@@ -39,8 +38,12 @@ export class BrowserSTTAdapter implements STTAdapter {
 
     this.pauseToleranceMs = options?.pauseToleranceMs ?? 2000;
 
-    const SpeechRecognitionCtor =
-      window.SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      this.onError?.('SpeechRecognition is not supported in this browser');
+      this.setStatus('error');
+      return;
+    }
 
     const rec = new SpeechRecognitionCtor();
     rec.continuous = true;
@@ -59,7 +62,6 @@ export class BrowserSTTAdapter implements STTAdapter {
         const confidence = result[0].confidence ?? 0;
 
         if (result.isFinal) {
-          this.partialBuffer = '';
           this.onFinalResult?.({
             transcript,
             confidence,
@@ -70,7 +72,6 @@ export class BrowserSTTAdapter implements STTAdapter {
             })),
           });
         } else {
-          this.partialBuffer = transcript;
           this.onPartialResult?.({ transcript, isFinal: false, confidence });
         }
       }

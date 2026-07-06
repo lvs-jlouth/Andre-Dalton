@@ -59,7 +59,7 @@ export class WakeWordDetector {
   start(): void {
     if (this.active) return;
 
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
       this.setStatus('unsupported');
       this.opts.onError?.('SpeechRecognition is not supported in this browser');
       return;
@@ -72,9 +72,12 @@ export class WakeWordDetector {
   private _startRecognition(): void {
     if (!this.active) return;
 
-    const SpeechRecognitionCtor =
-      window.SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      this.setStatus('unsupported');
+      this.opts.onError?.('SpeechRecognition is not supported in this browser');
+      return;
+    }
 
     const rec = new SpeechRecognitionCtor();
     rec.continuous = true;
