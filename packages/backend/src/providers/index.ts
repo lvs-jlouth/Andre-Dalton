@@ -5,6 +5,7 @@ import { AzureOpenAIProvider } from './AzureOpenAIProvider.js';
 import { MistralProvider } from './MistralProvider.js';
 import { OpenRouterProvider } from './OpenRouterProvider.js';
 import { OllamaProvider } from './OllamaProvider.js';
+import { MockProvider } from './MockProvider.js';
 import type { LlmProvider, ProviderInfo } from './types.js';
 import { getEnv, getProviderApiKey } from '../utils/env.js';
 
@@ -20,6 +21,7 @@ const PROVIDERS: LlmProvider[] = [
   new MistralProvider(),
   new OpenRouterProvider(),
   new OllamaProvider(),
+  new MockProvider(),
 ];
 
 const providerMap = new Map<string, LlmProvider>(PROVIDERS.map((p) => [p.id, p]));
