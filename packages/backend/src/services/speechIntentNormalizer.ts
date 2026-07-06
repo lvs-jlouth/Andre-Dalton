@@ -42,7 +42,7 @@ export class SpeechIntentNormalizer {
     const rawTranscript = safePartials.join(' ').replace(/\s+/g, ' ').trim();
 
     const assembled = this.assemblePartials(safePartials);
-    const withoutFillers = removeFillers(assembled);
+    const withoutFillers = removeFillers(assembled.text);
     const corrected = extractCorrection(withoutFillers.text);
     const substituted = applySubstitutions(corrected.text, this.config.substitutions);
     const aliasApplied = applyAlias(substituted, this.config.commandAliases);
