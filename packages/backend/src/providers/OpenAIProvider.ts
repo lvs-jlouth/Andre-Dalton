@@ -25,7 +25,7 @@ export class OpenAIProvider implements LlmProvider {
     const start = Date.now();
     try {
       const res = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `****** },
+        headers: { Authorization: 'Bearer ' + this.apiKey },
         signal: AbortSignal.timeout(5000),
       });
       const latencyMs = Date.now() - start;
@@ -57,7 +57,7 @@ export class OpenAIProvider implements LlmProvider {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `******,
+        Authorization: 'Bearer ' + this.apiKey,
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(30000),

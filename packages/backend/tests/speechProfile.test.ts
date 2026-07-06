@@ -128,4 +128,72 @@ describe('parseSpeechProfile', () => {
     const profile = parseSpeechProfile({ commandAliases: aliases });
     expect(profile.commandAliases).toEqual(aliases);
   });
+
+  it('deep-merges wakeWord so partial updates preserve other fields', () => {
+    // Only updating the phrase should leave enabled and sensitivity at defaults
+    const profile = parseSpeechProfile({ wakeWord: { phrase: 'Go time', enabled: false, sensitivity: 0.75 } });
+    expect(profile.wakeWord.phrase).toBe('Go time');
+    expect(profile.wakeWord.enabled).toBe(false);
+    expect(profile.wakeWord.sensitivity).toBe(0.75);
+  });
+
+  it('defaults wakeWord.enabled to false', () => {
+    const profile = parseSpeechProfile({});
+    expect(profile.wakeWord.enabled).toBe(false);
+  });
+
+  it('defaults wakeWord.phrase to "Hey J"', () => {
+    const profile = parseSpeechProfile({});
+    expect(profile.wakeWord.phrase).toBe('Hey J');
+  });
+});
+
+describe('validateSpeechProfile — wake word fields', () => {
+  it('accepts a valid wakeWord object', () => {
+    const r = validateSpeechProfile({
+      wakeWord: { enabled: true, phrase: 'Hey J', sensitivity: 0.8 },
+    });
+    expect(r.valid).toBe(true);
+  });
+
+  it('rejects wakeWord that is not an object', () => {
+    const r = validateSpeechProfile({ wakeWord: 'bad' });
+    expect(r.valid).toBe(false);
+    expect(r.errors?.some((e) => e.includes('wakeWord'))).toBe(true);
+  });
+
+  it('rejects wakeWord.enabled that is not boolean', () => {
+    const r = validateSpeechProfile({ wakeWord: { enabled: 'yes', phrase: 'Hey J', sensitivity: 0.8 } });
+    expect(r.valid).toBe(false);
+    expect(r.errors?.some((e) => e.includes('wakeWord.enabled'))).toBe(true);
+  });
+
+  it('rejects wakeWord.phrase shorter than 2 chars', () => {
+    const r = validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'A', sensitivity: 0.75 } });
+    expect(r.valid).toBe(false);
+    expect(r.errors?.some((e) => e.includes('wakeWord.phrase'))).toBe(true);
+  });
+
+  it('accepts wakeWord.phrase of exactly 2 chars', () => {
+    const r = validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'HJ', sensitivity: 0.75 } });
+    expect(r.valid).toBe(true);
+  });
+
+  it('rejects wakeWord.sensitivity outside 0-1', () => {
+    expect(
+      validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'Hey J', sensitivity: 1.5 } }).valid,
+    ).toBe(false);
+    expect(
+      validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'Hey J', sensitivity: -0.1 } }).valid,
+    ).toBe(false);
+  });
+
+  it('accepts wakeWord.sensitivity at boundaries 0 and 1', () => {
+    expect(
+      validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'Hey J', sensitivity: 0 } }).valid,
+    ).toBe(true);
+    expect(
+      validateSpeechProfile({ wakeWord: { enabled: false, phrase: 'Hey J', sensitivity: 1 } }).valid,
+    ).toBe(true);
+  });
 });

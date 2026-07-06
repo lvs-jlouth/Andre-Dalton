@@ -64,6 +64,11 @@ describe('speechProfileStore', () => {
         confirmationThreshold: 0.6,
         consentStoringCorrections: false,
         consentLocalLearning: false,
+        wakeWord: {
+          enabled: false,
+          phrase: 'Hey J',
+          sensitivity: 0.75,
+        },
         updatedAt: new Date().toISOString(),
       },
       isDirty: false,
@@ -111,5 +116,37 @@ describe('speechProfileStore', () => {
     useSpeechProfileStore.getState().addAlias('lights off', 'turn off all lights');
     useSpeechProfileStore.getState().removeAlias('lights off');
     expect(useSpeechProfileStore.getState().profile.commandAliases['lights off']).toBeUndefined();
+  });
+
+  it('default wakeWord is disabled with phrase "Hey J"', () => {
+    const { wakeWord } = useSpeechProfileStore.getState().profile;
+    expect(wakeWord.enabled).toBe(false);
+    expect(wakeWord.phrase).toBe('Hey J');
+    expect(wakeWord.sensitivity).toBe(0.75);
+  });
+
+  it('setWakeWord enables the wake word listener', () => {
+    useSpeechProfileStore.getState().setWakeWord({ enabled: true });
+    expect(useSpeechProfileStore.getState().profile.wakeWord.enabled).toBe(true);
+    // other fields unchanged
+    expect(useSpeechProfileStore.getState().profile.wakeWord.phrase).toBe('Hey J');
+  });
+
+  it('setWakeWord updates phrase only', () => {
+    useSpeechProfileStore.getState().setWakeWord({ phrase: 'Go time' });
+    const { wakeWord } = useSpeechProfileStore.getState().profile;
+    expect(wakeWord.phrase).toBe('Go time');
+    expect(wakeWord.enabled).toBe(false); // unchanged
+    expect(wakeWord.sensitivity).toBe(0.75); // unchanged
+  });
+
+  it('setWakeWord updates sensitivity', () => {
+    useSpeechProfileStore.getState().setWakeWord({ sensitivity: 0.5 });
+    expect(useSpeechProfileStore.getState().profile.wakeWord.sensitivity).toBe(0.5);
+  });
+
+  it('setWakeWord marks profile as dirty', () => {
+    useSpeechProfileStore.getState().setWakeWord({ enabled: true });
+    expect(useSpeechProfileStore.getState().isDirty).toBe(true);
   });
 });

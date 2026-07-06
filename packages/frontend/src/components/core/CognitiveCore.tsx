@@ -64,7 +64,7 @@ export function CognitiveCore() {
             <polygon
               points="16,4 28,12 28,20 16,28 4,20 4,12"
               fill="none"
-              className={`transition-colors duration-500 ${color.replace('stroke-', 'stroke-').replace('stroke-', '')}`}
+              className={`transition-colors duration-500 ${color}`}
               stroke="currentColor"
               strokeWidth="1.5"
             />

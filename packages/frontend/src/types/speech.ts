@@ -6,6 +6,19 @@ export interface SpeechSubstitution {
   intended: string;
 }
 
+export interface WakeWordConfig {
+  /** Whether the wake word listener is enabled (opt-in, never default). */
+  enabled: boolean;
+  /** The phrase to listen for — e.g. "Hey J" or any custom phrase. */
+  phrase: string;
+  /**
+   * Fuzzy match sensitivity 0-1.
+   * 1.0 = exact match only; lower values accept approximate matches
+   * (useful for users whose speech cadence produces slightly varied output).
+   */
+  sensitivity: number;
+}
+
 export interface SpeechProfile {
   id: string;
   preferredName: string;
@@ -18,6 +31,8 @@ export interface SpeechProfile {
   confirmationThreshold: number;
   consentStoringCorrections: boolean;
   consentLocalLearning: boolean;
+  /** Wake word / wake phrase configuration */
+  wakeWord: WakeWordConfig;
   updatedAt: string;
 }
 

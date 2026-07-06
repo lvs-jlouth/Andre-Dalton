@@ -14,6 +14,11 @@ const DEFAULT_PROFILE: SpeechProfile = {
   confirmationThreshold: 0.6,
   consentStoringCorrections: false,
   consentLocalLearning: false,
+  wakeWord: {
+    enabled: false,
+    phrase: 'Hey J',
+    sensitivity: 0.75,
+  },
   updatedAt: new Date().toISOString(),
 };
 
@@ -28,6 +33,7 @@ interface SpeechProfileState {
   removeVocabularyWord: (word: string) => void;
   addAlias: (alias: string, expanded: string) => void;
   removeAlias: (alias: string) => void;
+  setWakeWord: (patch: Partial<SpeechProfile['wakeWord']>) => void;
   markSaved: () => void;
 }
 
@@ -104,6 +110,16 @@ export const useSpeechProfileStore = create<SpeechProfileState>()(
             isDirty: true,
           };
         }),
+
+      setWakeWord: (patch) =>
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            wakeWord: { ...state.profile.wakeWord, ...patch },
+            updatedAt: new Date().toISOString(),
+          },
+          isDirty: true,
+        })),
 
       markSaved: () => set({ isDirty: false }),
     }),

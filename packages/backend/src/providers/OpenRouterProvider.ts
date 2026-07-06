@@ -27,7 +27,7 @@ export class OpenRouterProvider implements LlmProvider {
     const start = Date.now();
     try {
       const res = await fetch(`${this.baseUrl}/models`, {
-        headers: { Authorization: `****** },
+        headers: { Authorization: 'Bearer ' + this.apiKey },
         signal: AbortSignal.timeout(5000),
       });
       const latencyMs = Date.now() - start;
@@ -52,7 +52,7 @@ export class OpenRouterProvider implements LlmProvider {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `******,
+        Authorization: 'Bearer ' + this.apiKey,
       },
       body: JSON.stringify({ model, messages, max_tokens: request.maxTokens ?? 1024 }),
       signal: AbortSignal.timeout(30000),

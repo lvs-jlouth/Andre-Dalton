@@ -19,6 +19,19 @@ export interface SpeechSubstitution {
   intended: string;
 }
 
+/** Wake word / wake phrase configuration */
+export interface WakeWordConfig {
+  /** Whether the wake phrase listener is active (always opt-in) */
+  enabled: boolean;
+  /** The phrase to listen for, e.g. "Hey J" */
+  phrase: string;
+  /**
+   * Fuzzy match sensitivity 0-1.
+   * 1.0 = exact only; lower values accept approximate matches.
+   */
+  sensitivity: number;
+}
+
 export interface SpeechProfile {
   /** Unique profile identifier (UUID in production) */
   id: string;
@@ -42,6 +55,8 @@ export interface SpeechProfile {
   consentStoringCorrections: boolean;
   /** User has consented to speech profile being used for local learning */
   consentLocalLearning: boolean;
+  /** Wake word configuration (opt-in) */
+  wakeWord: WakeWordConfig;
   /** ISO 8601 timestamp of last update */
   updatedAt: string;
 }
@@ -58,6 +73,11 @@ const DEFAULT_PROFILE: SpeechProfile = {
   confirmationThreshold: 0.6,
   consentStoringCorrections: false,
   consentLocalLearning: false,
+  wakeWord: {
+    enabled: false,
+    phrase: 'Hey J',
+    sensitivity: 0.75,
+  },
   updatedAt: new Date().toISOString(),
 };
 
@@ -126,6 +146,29 @@ export function validateSpeechProfile(raw: unknown): ProfileValidationResult {
     }
   }
 
+  if (data['wakeWord'] !== undefined) {
+    const ww = data['wakeWord'];
+    if (typeof ww !== 'object' || ww === null) {
+      errors.push('wakeWord must be an object');
+    } else {
+      const wwObj = ww as Record<string, unknown>;
+      if (wwObj['enabled'] !== undefined && typeof wwObj['enabled'] !== 'boolean') {
+        errors.push('wakeWord.enabled must be a boolean');
+      }
+      if (wwObj['phrase'] !== undefined) {
+        if (typeof wwObj['phrase'] !== 'string' || (wwObj['phrase'] as string).trim().length < 2) {
+          errors.push('wakeWord.phrase must be a string of at least 2 characters');
+        }
+      }
+      if (wwObj['sensitivity'] !== undefined) {
+        const s = wwObj['sensitivity'];
+        if (typeof s !== 'number' || s < 0 || s > 1) {
+          errors.push('wakeWord.sensitivity must be a number between 0 and 1');
+        }
+      }
+    }
+  }
+
   return { valid: errors.length === 0, errors: errors.length ? errors : undefined };
 }
 
@@ -140,6 +183,11 @@ export function parseSpeechProfile(raw: unknown): SpeechProfile {
   return {
     ...base,
     ...data,
+    // Deep-merge wakeWord so partial updates (e.g. only phrase) don't wipe other fields
+    wakeWord: {
+      ...base.wakeWord,
+      ...(data.wakeWord ?? {}),
+    },
     updatedAt: new Date().toISOString(),
   };
 }
