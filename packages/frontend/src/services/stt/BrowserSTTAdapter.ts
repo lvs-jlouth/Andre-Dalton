@@ -22,7 +22,6 @@ export class BrowserSTTAdapter implements STTAdapter {
   private recognition: SpeechRecognition | null = null;
   private status: STTStatus = 'idle';
   private silenceTimer: ReturnType<typeof setTimeout> | null = null;
-  private partialBuffer = '';
   private pauseToleranceMs = 2000;
 
   private setStatus(s: STTStatus) {
@@ -39,8 +38,12 @@ export class BrowserSTTAdapter implements STTAdapter {
 
     this.pauseToleranceMs = options?.pauseToleranceMs ?? 2000;
 
-    const SpeechRecognitionCtor =
-      window.SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      this.onError?.('SpeechRecognition is not supported in this browser');
+      this.setStatus('error');
+      return;
+    }
 
     const rec = new SpeechRecognitionCtor();
     rec.continuous = true;
@@ -59,18 +62,19 @@ export class BrowserSTTAdapter implements STTAdapter {
         const confidence = result[0].confidence ?? 0;
 
         if (result.isFinal) {
-          this.partialBuffer = '';
           this.onFinalResult?.({
             transcript,
             confidence,
             isFinal: true,
-            alternatives: Array.from(result).slice(1).map((alt) => ({
-              transcript: alt.transcript,
-              confidence: alt.confidence ?? 0,
-            })),
+            alternatives: Array.from({ length: Math.max(result.length - 1, 0) }, (_, index) => {
+              const alt = result[index + 1];
+              return {
+                transcript: alt.transcript,
+                confidence: alt.confidence ?? 0,
+              };
+            }),
           });
         } else {
-          this.partialBuffer = transcript;
           this.onPartialResult?.({ transcript, isFinal: false, confidence });
         }
       }

@@ -20,7 +20,6 @@ export class BrowserTTSAdapter implements TTSAdapter {
 
   private status: TTSStatus = 'idle';
   private lastText = '';
-  private utterance: SpeechSynthesisUtterance | null = null;
 
   private setStatus(s: TTSStatus): void {
     this.status = s;
@@ -79,7 +78,6 @@ export class BrowserTTSAdapter implements TTSAdapter {
       utterance.onpause = () => this.setStatus('paused');
       utterance.onresume = () => this.setStatus('speaking');
 
-      this.utterance = utterance;
       window.speechSynthesis.speak(utterance);
     });
   }
