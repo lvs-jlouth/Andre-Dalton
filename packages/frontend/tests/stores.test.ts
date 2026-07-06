@@ -1,15 +1,36 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAssistantStore } from '../src/store/assistantStore.js';
+import { useSettingsStore } from '../src/store/settingsStore.js';
 import { useSpeechProfileStore } from '../src/store/speechProfileStore.js';
 
 describe('assistantStore', () => {
   beforeEach(() => {
+    localStorage.clear();
+    useSettingsStore.setState({
+      accessibility: {
+        reducedMotion: false,
+        highContrast: false,
+        largeText: false,
+        fontScale: 1.0,
+        captions: true,
+        onHandedLayout: 'none',
+        keyboardNavigation: true,
+        largeHitTargets: true,
+      },
+      privacy: {
+        persistTranscripts: false,
+        consentSpeechImprovement: false,
+        debugMode: false,
+      },
+      activePanel: 'dashboard',
+    });
     useAssistantStore.setState({
       status: 'idle',
       conversation: [],
       lastResponse: null,
       currentCaption: '',
       errorMessage: null,
+      pendingConfirmation: null,
     });
   });
 
@@ -46,6 +67,26 @@ describe('assistantStore', () => {
   it('setCaption updates caption', () => {
     useAssistantStore.getState().setCaption('Hello there');
     expect(useAssistantStore.getState().currentCaption).toBe('Hello there');
+  });
+
+  it('persists transcripts only when enabled', () => {
+    useAssistantStore.getState().addTurn({ role: 'user', content: 'do not retain me' });
+    expect(localStorage.getItem('aurora-transcripts')).toBeNull();
+
+    useSettingsStore.getState().updatePrivacy({ persistTranscripts: true });
+    useAssistantStore.getState().addTurn({ role: 'assistant', content: 'retain me' });
+
+    expect(localStorage.getItem('aurora-transcripts')).toContain('retain me');
+
+    useSettingsStore.getState().updatePrivacy({ persistTranscripts: false });
+    expect(localStorage.getItem('aurora-transcripts')).toBeNull();
+  });
+
+  it('tracks pending confirmations for risky actions', () => {
+    useAssistantStore.getState().requestConfirmation('delete all notes', 'destructive changes');
+    expect(useAssistantStore.getState().pendingConfirmation?.message).toBe('delete all notes');
+    useAssistantStore.getState().clearPendingConfirmation();
+    expect(useAssistantStore.getState().pendingConfirmation).toBeNull();
   });
 });
 
@@ -148,5 +189,21 @@ describe('speechProfileStore', () => {
   it('setWakeWord marks profile as dirty', () => {
     useSpeechProfileStore.getState().setWakeWord({ enabled: true });
     expect(useSpeechProfileStore.getState().isDirty).toBe(true);
+  });
+
+  it('drops sensitive learning data from persisted profile without consent', () => {
+    useSpeechProfileStore.getState().updateProfile({
+      preferredName: 'Andre',
+      consentLocalLearning: false,
+      consentStoringCorrections: false,
+      customVocabulary: ['secret phrase'],
+      commandAliases: { unlock: 'open the front door' },
+      substitutions: [{ heard: 'locks', intended: 'locks' }],
+    });
+
+    const raw = localStorage.getItem('aurora-speech-profile');
+    expect(raw).not.toContain('secret phrase');
+    expect(raw).not.toContain('open the front door');
+    expect(raw).not.toContain('Andre');
   });
 });

@@ -22,6 +22,20 @@ const app = Fastify({
 });
 
 async function start(): Promise<void> {
+  app.addHook('onRequest', async (request, reply) => {
+    const origin = request.headers.origin;
+    if (origin && origin !== env.CORS_ORIGIN) {
+      return reply.status(403).send({ error: 'Origin not allowed' });
+    }
+  });
+
+  app.addHook('onSend', async (request, reply, payload) => {
+    reply.header('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    reply.header('Pragma', 'no-cache');
+    reply.header('Expires', '0');
+    return payload;
+  });
+
   // Security middleware
   await app.register(helmet, {
     contentSecurityPolicy: false, // Configured per-route if needed

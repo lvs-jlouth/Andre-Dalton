@@ -35,6 +35,17 @@ interface SpeechProfileState {
   removeAlias: (alias: string) => void;
   setWakeWord: (patch: Partial<SpeechProfile['wakeWord']>) => void;
   markSaved: () => void;
+  resetProfile: () => void;
+}
+
+function getPersistedProfile(profile: SpeechProfile): SpeechProfile {
+  return {
+    ...profile,
+    preferredName: profile.consentLocalLearning ? profile.preferredName : DEFAULT_PROFILE.preferredName,
+    substitutions: profile.consentStoringCorrections ? profile.substitutions : [],
+    customVocabulary: profile.consentLocalLearning ? profile.customVocabulary : [],
+    commandAliases: profile.consentLocalLearning ? profile.commandAliases : {},
+  };
 }
 
 export const useSpeechProfileStore = create<SpeechProfileState>()(
@@ -122,7 +133,19 @@ export const useSpeechProfileStore = create<SpeechProfileState>()(
         })),
 
       markSaved: () => set({ isDirty: false }),
+
+      resetProfile: () =>
+        set({
+          profile: { ...DEFAULT_PROFILE, updatedAt: new Date().toISOString() },
+          isDirty: false,
+        }),
     }),
-    { name: 'aurora-speech-profile' },
+    {
+      name: 'aurora-speech-profile',
+      partialize: (state) => ({
+        profile: getPersistedProfile(state.profile),
+        isDirty: state.isDirty,
+      }),
+    },
   ),
 );

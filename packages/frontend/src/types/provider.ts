@@ -31,7 +31,7 @@ export interface AssistantRequest {
   messages: LlmMessage[];
   providerId?: string;
   model?: string;
-  systemPrompt?: string;
+  profileName?: string;
   maxTokens?: number;
   temperature?: number;
 }

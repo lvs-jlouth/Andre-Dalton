@@ -4,11 +4,12 @@ import { getProvider, getDefaultProvider } from '../providers/index.js';
 import type { LlmMessage } from '../providers/types.js';
 import { createLogger } from '../utils/logger.js';
 import { getEnv } from '../utils/env.js';
+import { buildSystemPrompt, sanitizeConversation } from '../utils/assistantSecurity.js';
 
 const log = createLogger('route:assistant');
 
 const MessageSchema = z.object({
-  role: z.enum(['user', 'assistant', 'system']),
+  role: z.enum(['user', 'assistant']),
   content: z.string().min(1).max(32_000),
 });
 
@@ -16,7 +17,7 @@ const AssistantRequestSchema = z.object({
   messages: z.array(MessageSchema).min(1).max(100),
   providerId: z.string().optional(),
   model: z.string().optional(),
-  systemPrompt: z.string().max(4000).optional(),
+  profileName: z.string().max(100).optional(),
   maxTokens: z.number().int().min(1).max(8192).optional(),
   temperature: z.number().min(0).max(2).optional(),
 });
@@ -29,7 +30,11 @@ export async function assistantRoutes(app: FastifyInstance): Promise<void> {
       return reply.status(400).send({ error: 'Invalid request', details: parsed.error.flatten() });
     }
 
-    const { messages, providerId, model, systemPrompt, maxTokens, temperature } = parsed.data;
+    const { messages, providerId, model, profileName, maxTokens, temperature } = parsed.data;
+    const sanitizedMessages = sanitizeConversation(messages as LlmMessage[]);
+    if (sanitizedMessages.length === 0) {
+      return reply.status(400).send({ error: 'At least one user or assistant message is required' });
+    }
 
     let provider;
     try {
@@ -52,9 +57,9 @@ export async function assistantRoutes(app: FastifyInstance): Promise<void> {
 
     try {
       const response = await provider.sendMessage({
-        messages: messages as LlmMessage[],
+        messages: sanitizedMessages,
         model,
-        systemPrompt,
+        systemPrompt: buildSystemPrompt(profileName),
         maxTokens,
         temperature,
       });
@@ -69,7 +74,9 @@ export async function assistantRoutes(app: FastifyInstance): Promise<void> {
       });
     } catch (err) {
       log.error('Assistant message error', err);
-      return reply.status(502).send({ error: 'Failed to get response from AI provider' });
+      return reply.status(502).send({
+        error: `Provider "${provider.id}" is unavailable right now. Please retry or switch providers.`,
+      });
     }
   });
 }

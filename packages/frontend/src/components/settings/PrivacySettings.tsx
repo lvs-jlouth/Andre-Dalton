@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { Panel } from '../ui/Panel.js';
+import { Button } from '../ui/Button.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
+import { useAssistantStore } from '../../store/assistantStore.js';
 import { useSpeechProfileStore } from '../../store/speechProfileStore.js';
 import type { PrivacySettings } from '../../types/settings.js';
 
@@ -8,13 +11,28 @@ import type { PrivacySettings } from '../../types/settings.js';
  * Following a privacy-first, consent-first design.
  */
 export function PrivacySettingsPanel() {
+  const [clearMessage, setClearMessage] = useState<string | null>(null);
   const settings = useSettingsStore((s) => s.privacy);
   const update = useSettingsStore((s) => s.updatePrivacy);
+  const clearConversation = useAssistantStore((s) => s.clearConversation);
   const speechProfile = useSpeechProfileStore((s) => s.profile);
   const updateProfile = useSpeechProfileStore((s) => s.updateProfile);
+  const resetProfile = useSpeechProfileStore((s) => s.resetProfile);
 
   function patch(p: Partial<PrivacySettings>) {
+    setClearMessage(null);
     update(p);
+  }
+
+  function handleClearLocalData() {
+    clearConversation();
+    resetProfile();
+    update({
+      persistTranscripts: false,
+      consentSpeechImprovement: false,
+      debugMode: false,
+    });
+    setClearMessage('Local transcripts and sensitive speech-profile data were cleared from this device.');
   }
 
   return (
@@ -37,7 +55,7 @@ export function PrivacySettingsPanel() {
             <span>
               <span className="font-mono text-aurora-white">Persist conversation transcripts</span>
               <span id="persist-desc" className="block text-aurora-muted text-xs mt-0.5">
-                By default, conversations are not saved. Enable this to retain a local history.
+                By default, conversations stay in memory only for the current session. Enable this to retain an encrypted-browser local history until you clear it.
               </span>
             </span>
           </label>
@@ -84,14 +102,36 @@ export function PrivacySettingsPanel() {
           </label>
         </section>
 
+        <section aria-labelledby="local-data-heading">
+          <h3 id="local-data-heading" className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-muted mb-2">
+            Local Data Controls
+          </h3>
+
+          <div className="space-y-3 rounded-lg border border-aurora-border/30 bg-aurora-bg/40 p-3">
+            <p className="text-xs text-aurora-muted">
+              Clear retained transcripts and reset speech-profile fields that can reveal personal speaking patterns.
+            </p>
+            <Button variant="secondary" size="md" onClick={handleClearLocalData}>
+              Clear local data
+            </Button>
+            {clearMessage && (
+              <p role="status" className="text-xs font-mono text-aurora-cyan">
+                {clearMessage}
+              </p>
+            )}
+          </div>
+        </section>
+
         {/* Transparency notice */}
         <section className="bg-aurora-bg/40 border border-aurora-border/30 rounded-lg p-3 text-xs text-aurora-muted space-y-1">
           <p className="font-mono font-semibold text-aurora-cyan/80">Privacy assurance</p>
           <p>• API keys are never stored in your browser or logs.</p>
           <p>• Prompts and responses are not logged by default.</p>
+          <p>• Sensitive speech-profile corrections are only retained when you opt in.</p>
+          <p>• High-risk requests require an explicit confirmation step before they are sent.</p>
           <p>• All processing uses the provider you configure.</p>
           <p>• Speech data is not sent to third parties unless you configure a cloud STT provider.</p>
-          <p>• You can clear all local data at any time by clearing site data in your browser settings.</p>
+          <p>• Android PWAs and future desktop wrappers should still be treated as local apps on a shared device — use OS-level screen locks and keep browser/site data protected.</p>
         </section>
       </div>
     </Panel>

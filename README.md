@@ -113,7 +113,7 @@ AURORA uses a provider abstraction layer. Configure each via environment variabl
 |----------|-------------|
 | OpenAI | `OPENAI_API_KEY` |
 | Anthropic | `ANTHROPIC_API_KEY` |
-| Google Gemini | `GEMINI_API_KEY` |
+| Google Gemini | `GOOGLE_GEMINI_API_KEY` |
 | Azure OpenAI | `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` |
 | Mistral | `MISTRAL_API_KEY` |
 | OpenRouter | `OPENROUTER_API_KEY` |
@@ -188,8 +188,10 @@ Disfluencies are treated as **normal variation**, not errors.
 - Authorization headers use string concatenation (`'Bearer ' + key`) — template literals are avoided to prevent accidental logging
 
 ### Data retention
-- Privacy Mode can be toggled in settings to disable all transcript persistence
+- Transcripts stay in memory unless the user explicitly enables local transcript retention
+- Disabling transcript retention clears previously stored local transcripts
 - Speech profile corrections are only stored locally when `consentStoringCorrections: true`
+- Sensitive speech-profile learning fields are only persisted when the matching consent toggles are enabled
 - No analytics, telemetry, or third-party tracking
 
 ---
@@ -205,6 +207,14 @@ Disfluencies are treated as **normal variation**, not errors.
 | Malformed speech profile payload | `validateSpeechProfile()` validates all fields with strict type + range checks |
 | Wake word always-listening | Opt-in only; off by default; uses no cloud audio streaming |
 | Excessive microphone access | STT only active during push-to-talk or after confirmed wake word; mic released on stop |
+| Risky requests or planned integrations | Client requires explicit confirmation before forwarding high-risk local-network, destructive, or command-like requests |
+| Provider outages | Errors avoid leaking backend details and instruct the user to retry or switch providers |
+
+---
+
+## Threat Model
+
+See [`docs/threat-model.md`](./docs/threat-model.md) for the full threat model, trust boundaries, and future requirements for Android PWA, desktop-wrapper, and local-network integrations.
 
 ---
 
@@ -220,6 +230,8 @@ PERSIST_TRANSCRIPTS=false  # Set true to allow local transcript storage
 PORT=3001
 CORS_ORIGIN=http://localhost:5173
 ```
+
+> For Android PWA installs, use HTTPS when testing microphone and wake-word features on-device.
 
 ### TypeScript
 
@@ -259,4 +271,3 @@ No copyrighted names, dialogue, visuals, logos, or fictional canon from any fran
 ## License
 
 MIT
-

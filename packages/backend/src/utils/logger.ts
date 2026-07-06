@@ -1,6 +1,6 @@
 import pino from 'pino';
 import { getEnv } from './env.js';
-import { redactSensitive } from './redaction.js';
+import { redactObject, redactSensitive } from './redaction.js';
 
 /**
  * Creates a named logger.
@@ -25,13 +25,29 @@ export function createLogger(name: string) {
     },
   });
 
+  function sanitizeMeta(meta?: unknown): unknown {
+    if (meta === undefined) return {};
+    if (typeof meta === 'string') return redactSensitive(meta);
+    if (Array.isArray(meta)) return meta.map((item) => sanitizeMeta(item));
+    if (meta instanceof Error) {
+      return {
+        message: redactSensitive(meta.message),
+        stack: meta.stack,
+      };
+    }
+    if (meta && typeof meta === 'object') {
+      return redactObject(meta as Record<string, unknown>);
+    }
+    return meta;
+  }
+
   return {
-    info: (msg: string, meta?: unknown) => logger.info(meta ?? {}, msg),
-    warn: (msg: string, meta?: unknown) => logger.warn(meta ?? {}, msg),
-    error: (msg: string, meta?: unknown) => logger.error(meta ?? {}, msg),
+    info: (msg: string, meta?: unknown) => logger.info(sanitizeMeta(meta), redactSensitive(msg)),
+    warn: (msg: string, meta?: unknown) => logger.warn(sanitizeMeta(meta), redactSensitive(msg)),
+    error: (msg: string, meta?: unknown) => logger.error(sanitizeMeta(meta), redactSensitive(msg)),
     debug: (msg: string, meta?: unknown) => {
       if (env.DEBUG_MODE) {
-        logger.debug(meta ?? {}, msg);
+        logger.debug(sanitizeMeta(meta), redactSensitive(msg));
       }
     },
   };
