@@ -69,7 +69,7 @@ async function performSearch(query: string, engine: string, limit: number): Prom
 }
 
 export default async function searchRoutes(fastify: FastifyInstance) {
-  fastify.get('/search', async (request: FastifyRequest<{ Querystring: SearchQuery }>, reply: FastifyReply) => {
+  fastify.get('/', async (request: FastifyRequest<{ Querystring: SearchQuery }>, reply: FastifyReply) => {
     const { q, engine = 'duckduckgo', limit = 5 } = request.query;
 
     if (!q || q.trim().length === 0) {
