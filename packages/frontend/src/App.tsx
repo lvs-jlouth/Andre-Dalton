@@ -12,7 +12,7 @@ import { useSettingsStore } from './store/settingsStore.js';
 import './index.css';
 
 /**
- * AURORA — App root.
+ * J.A.R.G.I.I.N. — App root.
  * Renders the active panel based on navigation state from settingsStore.
  */
 export default function App() {
@@ -23,7 +23,7 @@ export default function App() {
       {/* Skip-to-content link for keyboard users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-aurora-cyan focus:text-aurora-bg focus:px-4 focus:py-2 focus:rounded-lg font-mono text-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-jargiin-cyan focus:text-jargiin-bg focus:px-4 focus:py-2 focus:rounded-lg font-mono text-sm"
       >
         Skip to main content
       </a>

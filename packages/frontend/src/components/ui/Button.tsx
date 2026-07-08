@@ -9,10 +9,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-aurora-cyan/20 border-aurora-cyan/60 text-aurora-cyan hover:bg-aurora-cyan/30 focus:ring-aurora-cyan/50',
-  secondary: 'bg-aurora-blue/20 border-aurora-blue/60 text-aurora-blue hover:bg-aurora-blue/30 focus:ring-aurora-blue/50',
-  danger: 'bg-aurora-danger/20 border-aurora-danger/60 text-aurora-danger hover:bg-aurora-danger/30 focus:ring-aurora-danger/50',
-  ghost: 'bg-transparent border-aurora-border text-aurora-muted hover:bg-aurora-border/20 focus:ring-aurora-cyan/30',
+  primary: 'bg-jargiin-cyan/20 border-jargiin-cyan/60 text-jargiin-cyan hover:bg-jargiin-cyan/30 focus:ring-jargiin-cyan/50',
+  secondary: 'bg-jargiin-blue/20 border-jargiin-blue/60 text-jargiin-blue hover:bg-jargiin-blue/30 focus:ring-jargiin-blue/50',
+  danger: 'bg-jargiin-danger/20 border-jargiin-danger/60 text-jargiin-danger hover:bg-jargiin-danger/30 focus:ring-jargiin-danger/50',
+  ghost: 'bg-transparent border-jargiin-border text-jargiin-muted hover:bg-jargiin-border/20 focus:ring-jargiin-cyan/30',
 };
 
 const sizeClasses = {
@@ -23,7 +23,7 @@ const sizeClasses = {
 };
 
 /**
- * AURORA button — meets WCAG 2.1 minimum 44x44px touch target.
+ * J.A.R.G.I.I.N. button — meets WCAG 2.1 minimum 44x44px touch target.
  * Always has a visible focus ring for keyboard navigation.
  */
 export function Button({
@@ -42,7 +42,7 @@ export function Button({
         inline-flex items-center justify-center gap-2
         border rounded-lg font-mono tracking-wide
         transition-all duration-150
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-aurora-bg
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-jargiin-bg
         disabled:opacity-40 disabled:cursor-not-allowed
         ${variantClasses[variant]}
         ${sizeClasses[size]}

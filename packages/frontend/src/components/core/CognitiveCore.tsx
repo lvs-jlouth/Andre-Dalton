@@ -11,15 +11,15 @@ const STATUS_LABELS = {
 };
 
 const STATUS_COLORS = {
-  idle: 'stroke-aurora-teal',
-  thinking: 'stroke-aurora-blue',
-  speaking: 'stroke-aurora-cyan',
-  listening: 'stroke-aurora-warn',
-  error: 'stroke-aurora-danger',
+  idle: 'stroke-jargiin-teal',
+  thinking: 'stroke-jargiin-blue',
+  speaking: 'stroke-jargiin-cyan',
+  listening: 'stroke-jargiin-warn',
+  error: 'stroke-jargiin-danger',
 };
 
 /**
- * CognitiveCore — the central HUD orb representing AURORA's active state.
+ * CognitiveCore — the central HUD orb representing J.A.R.G.I.I.N.'s active state.
  * Original visual element inspired by cinematic heads-up display systems.
  */
 export function CognitiveCore() {
@@ -35,7 +35,7 @@ export function CognitiveCore() {
       className="flex flex-col items-center gap-3"
       aria-live="polite"
       aria-atomic="true"
-      aria-label={`AURORA status: ${label}`}
+      aria-label={`J.A.R.G.I.I.N. status: ${label}`}
     >
       {/* Outer decorative rings */}
       <div className="relative flex items-center justify-center">
@@ -52,10 +52,10 @@ export function CognitiveCore() {
           className={`
             absolute w-16 h-16 rounded-full
             flex items-center justify-center
-            bg-aurora-panel/90 border border-aurora-border/60
-            shadow-inner shadow-aurora-cyan/10
+            bg-jargiin-panel/90 border border-jargiin-border/60
+            shadow-inner shadow-jargiin-cyan/10
             transition-all duration-500
-            ${isActive && !reducedMotion ? 'shadow-lg shadow-aurora-cyan/30' : ''}
+            ${isActive && !reducedMotion ? 'shadow-lg shadow-jargiin-cyan/30' : ''}
           `}
           aria-hidden="true"
         >
@@ -68,19 +68,19 @@ export function CognitiveCore() {
               stroke="currentColor"
               strokeWidth="1.5"
             />
-            <circle cx="16" cy="16" r="4" className="fill-aurora-cyan/40" />
+            <circle cx="16" cy="16" r="4" className="fill-jargiin-cyan/40" />
           </svg>
         </div>
       </div>
 
       {/* Status label */}
       <div className="text-center">
-        <p className="text-xs font-mono tracking-widest uppercase text-aurora-muted">
+        <p className="text-xs font-mono tracking-widest uppercase text-jargiin-muted">
           Cognitive Core
         </p>
         <p
           className={`text-sm font-mono font-semibold mt-0.5 ${
-            status === 'error' ? 'text-aurora-danger' : 'text-aurora-white'
+            status === 'error' ? 'text-jargiin-danger' : 'text-jargiin-white'
           }`}
         >
           {label}

@@ -11,7 +11,7 @@ export function StatusRing({
   size = 80,
   active = false,
   pulsing = false,
-  color = 'stroke-aurora-cyan',
+  color = 'stroke-jargiin-cyan',
   label,
 }: StatusRingProps) {
   const r = (size / 2) * 0.85;
@@ -32,7 +32,7 @@ export function StatusRing({
           cy={size / 2}
           r={r}
           fill="none"
-          className="stroke-aurora-border/30"
+          className="stroke-jargiin-border/30"
           strokeWidth={2}
         />
         {/* Active ring */}

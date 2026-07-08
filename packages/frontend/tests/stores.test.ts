@@ -23,10 +23,10 @@ describe('assistantStore', () => {
   });
 
   it('addTurn appends to conversation', () => {
-    useAssistantStore.getState().addTurn({ role: 'user', content: 'Hello AURORA' });
+    useAssistantStore.getState().addTurn({ role: 'user', content: 'Hello J.A.R.G.I.I.N.' });
     const conv = useAssistantStore.getState().conversation;
     expect(conv.length).toBe(1);
-    expect(conv[0].content).toBe('Hello AURORA');
+    expect(conv[0].content).toBe('Hello J.A.R.G.I.I.N.');
     expect(conv[0].role).toBe('user');
     expect(typeof conv[0].id).toBe('string');
     expect(typeof conv[0].timestamp).toBe('number');
@@ -96,14 +96,14 @@ describe('speechProfileStore', () => {
   });
 
   it('addVocabularyWord deduplicates', () => {
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
     expect(useSpeechProfileStore.getState().profile.customVocabulary).toHaveLength(1);
   });
 
   it('removeVocabularyWord removes word', () => {
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
-    useSpeechProfileStore.getState().removeVocabularyWord('AURORA');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
+    useSpeechProfileStore.getState().removeVocabularyWord('J.A.R.G.I.I.N.');
     expect(useSpeechProfileStore.getState().profile.customVocabulary).toHaveLength(0);
   });
 

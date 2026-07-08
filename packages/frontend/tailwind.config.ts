@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        aurora: {
+        jargiin: {
           bg: '#0a1628',
           panel: '#0d1f3c',
           border: '#1a3a5c',

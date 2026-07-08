@@ -1,8 +1,8 @@
 {
-  "name": "@aurora/frontend",
+  "name": "@jargiin/frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "AURORA frontend – React HUD interface",
+  "description": "J.A.R.G.I.I.N. frontend – React HUD interface",
   "type": "module",
   "scripts": {
     "dev": "vite",

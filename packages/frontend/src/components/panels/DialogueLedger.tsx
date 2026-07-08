@@ -32,7 +32,7 @@ export function DialogueLedger() {
         style={{ fontSize: `${fontScale}rem` }}
       >
         {conversation.length === 0 && (
-          <p className="text-aurora-muted/60 text-sm font-mono italic">
+          <p className="text-jargiin-muted/60 text-sm font-mono italic">
             Say something or type a message below to begin.
           </p>
         )}
@@ -42,15 +42,15 @@ export function DialogueLedger() {
             key={turn.id}
             className={`flex flex-col gap-0.5 ${turn.role === 'user' ? 'items-end' : 'items-start'}`}
           >
-            <span className="text-aurora-muted text-xs font-mono">
-              {turn.role === 'user' ? 'You' : 'AURORA'}
+            <span className="text-jargiin-muted text-xs font-mono">
+              {turn.role === 'user' ? 'You' : 'J.A.R.G.I.I.N.'}
             </span>
             <div
               className={`
                 max-w-[85%] px-3 py-2 rounded-xl text-sm
                 ${turn.role === 'user'
-                  ? 'bg-aurora-blue/20 border border-aurora-blue/30 text-aurora-white rounded-br-sm'
-                  : 'bg-aurora-teal/10 border border-aurora-teal/20 text-aurora-white rounded-bl-sm'}
+                  ? 'bg-jargiin-blue/20 border border-jargiin-blue/30 text-jargiin-white rounded-br-sm'
+                  : 'bg-jargiin-teal/10 border border-jargiin-teal/20 text-jargiin-white rounded-bl-sm'}
               `}
             >
               {turn.content}
@@ -66,8 +66,8 @@ export function DialogueLedger() {
             aria-atomic="false"
             className="flex items-start gap-2"
           >
-            <span className="text-aurora-muted text-xs font-mono">AURORA</span>
-            <div className="bg-aurora-cyan/10 border border-aurora-cyan/20 px-3 py-2 rounded-xl text-sm text-aurora-cyan/90 italic">
+            <span className="text-jargiin-muted text-xs font-mono">J.A.R.G.I.I.N.</span>
+            <div className="bg-jargiin-cyan/10 border border-jargiin-cyan/20 px-3 py-2 rounded-xl text-sm text-jargiin-cyan/90 italic">
               {currentCaption}
               <span className="animate-pulse ml-1">▋</span>
             </div>

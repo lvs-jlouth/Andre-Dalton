@@ -12,13 +12,13 @@ interface ToggleProps {
 
 function Toggle({ id, label, checked, onChange, description }: ToggleProps) {
   return (
-    <div className="flex items-center justify-between gap-3 py-2 border-b border-aurora-border/20 last:border-0">
+    <div className="flex items-center justify-between gap-3 py-2 border-b border-jargiin-border/20 last:border-0">
       <div>
-        <label htmlFor={id} className="text-sm font-mono text-aurora-white cursor-pointer">
+        <label htmlFor={id} className="text-sm font-mono text-jargiin-white cursor-pointer">
           {label}
         </label>
         {description && (
-          <p id={`${id}-desc`} className="text-xs text-aurora-muted mt-0.5">{description}</p>
+          <p id={`${id}-desc`} className="text-xs text-jargiin-muted mt-0.5">{description}</p>
         )}
       </div>
       <button
@@ -29,8 +29,8 @@ function Toggle({ id, label, checked, onChange, description }: ToggleProps) {
         onClick={() => onChange(!checked)}
         className={`
           relative inline-flex h-6 w-11 items-center rounded-full
-          transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 focus:ring-offset-2 focus:ring-offset-aurora-bg
-          ${checked ? 'bg-aurora-cyan/60' : 'bg-aurora-border/40'}
+          transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 focus:ring-offset-2 focus:ring-offset-jargiin-bg
+          ${checked ? 'bg-jargiin-cyan/60' : 'bg-jargiin-border/40'}
         `}
       >
         <span
@@ -100,7 +100,7 @@ export function AccessibilitySettingsPanel() {
 
         {/* Font scale slider */}
         <div className="py-2">
-          <label htmlFor="font-scale" className="block text-sm font-mono text-aurora-white mb-1">
+          <label htmlFor="font-scale" className="block text-sm font-mono text-jargiin-white mb-1">
             Font scale: {settings.fontScale.toFixed(1)}×
           </label>
           <input
@@ -111,7 +111,7 @@ export function AccessibilitySettingsPanel() {
             step={0.1}
             value={settings.fontScale}
             onChange={(e) => patch({ fontScale: Number(e.target.value) })}
-            className="w-full accent-aurora-cyan"
+            className="w-full accent-jargiin-cyan"
             aria-valuemin={0.8}
             aria-valuemax={2.5}
             aria-valuenow={settings.fontScale}
@@ -122,7 +122,7 @@ export function AccessibilitySettingsPanel() {
         {/* One-handed layout */}
         <div className="py-2">
           <fieldset>
-            <legend className="text-sm font-mono text-aurora-white mb-1">
+            <legend className="text-sm font-mono text-jargiin-white mb-1">
               One-handed layout
             </legend>
             <div className="flex gap-3">
@@ -134,9 +134,9 @@ export function AccessibilitySettingsPanel() {
                     value={val}
                     checked={settings.onHandedLayout === val}
                     onChange={() => patch({ onHandedLayout: val })}
-                    className="accent-aurora-cyan"
+                    className="accent-jargiin-cyan"
                   />
-                  <span className="text-sm font-mono text-aurora-white capitalize">{val}</span>
+                  <span className="text-sm font-mono text-jargiin-white capitalize">{val}</span>
                 </label>
               ))}
             </div>

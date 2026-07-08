@@ -48,7 +48,7 @@ async function start(): Promise<void> {
 
   try {
     await app.listen({ port: env.PORT, host: env.HOST });
-    log.info(`AURORA backend listening on http://${env.HOST}:${env.PORT}`);
+    log.info(`J.A.R.G.I.I.N. backend listening on http://${env.HOST}:${env.PORT}`);
   } catch (err) {
     log.error('Failed to start server', err);
     process.exit(1);

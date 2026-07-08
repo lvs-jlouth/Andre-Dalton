@@ -105,20 +105,20 @@ export function IntentConsole() {
               flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono
               border transition-colors duration-300
               ${wakeStatus === 'monitoring'
-                ? 'bg-aurora-teal/10 border-aurora-teal/30 text-aurora-teal'
+                ? 'bg-jargiin-teal/10 border-jargiin-teal/30 text-jargiin-teal'
                 : wakeStatus === 'detected'
-                ? 'bg-aurora-cyan/10 border-aurora-cyan/40 text-aurora-cyan'
+                ? 'bg-jargiin-cyan/10 border-jargiin-cyan/40 text-jargiin-cyan'
                 : wakeStatus === 'error' || wakeStatus === 'unsupported'
-                ? 'bg-aurora-danger/10 border-aurora-danger/30 text-aurora-danger'
-                : 'bg-aurora-border/10 border-aurora-border/20 text-aurora-muted'}
+                ? 'bg-jargiin-danger/10 border-jargiin-danger/30 text-jargiin-danger'
+                : 'bg-jargiin-border/10 border-jargiin-border/20 text-jargiin-muted'}
             `}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                wakeStatus === 'monitoring' ? 'bg-aurora-teal animate-pulse' :
-                wakeStatus === 'detected'   ? 'bg-aurora-cyan' :
-                wakeStatus === 'error'      ? 'bg-aurora-danger' :
-                'bg-aurora-muted/40'
+                wakeStatus === 'monitoring' ? 'bg-jargiin-teal animate-pulse' :
+                wakeStatus === 'detected'   ? 'bg-jargiin-cyan' :
+                wakeStatus === 'error'      ? 'bg-jargiin-danger' :
+                'bg-jargiin-muted/40'
               }`}
               aria-hidden="true"
             />
@@ -148,7 +148,7 @@ export function IntentConsole() {
           <p
             aria-live="polite"
             aria-atomic="false"
-            className="text-sm font-mono text-aurora-cyan/70 italic min-h-[1.5rem]"
+            className="text-sm font-mono text-jargiin-cyan/70 italic min-h-[1.5rem]"
           >
             {partialTranscript}…
           </p>
@@ -156,18 +156,18 @@ export function IntentConsole() {
 
         {/* Error feedback */}
         {errorMessage && (
-          <p role="alert" className="text-sm text-aurora-danger font-mono">
+          <p role="alert" className="text-sm text-jargiin-danger font-mono">
             ⚠ {errorMessage}
           </p>
         )}
 
         {/* Text input row */}
         <div className="flex gap-2 items-center">
-          <label htmlFor="aurora-input" className="sr-only">
-            Message to AURORA
+          <label htmlFor="jargiin-input" className="sr-only">
+            Message to J.A.R.G.I.I.N.
           </label>
           <input
-            id="aurora-input"
+            id="jargiin-input"
             ref={inputRef}
             type="text"
             value={inputText}
@@ -182,10 +182,10 @@ export function IntentConsole() {
             autoComplete="off"
             spellCheck={false}
             className="
-              flex-1 bg-aurora-bg/60 border border-aurora-border/60
-              rounded-lg px-3 py-2 text-sm font-mono text-aurora-white
-              placeholder:text-aurora-muted/50
-              focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50
+              flex-1 bg-jargiin-bg/60 border border-jargiin-border/60
+              rounded-lg px-3 py-2 text-sm font-mono text-jargiin-white
+              placeholder:text-jargiin-muted/50
+              focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50
               disabled:opacity-50
               min-h-[44px]
             "

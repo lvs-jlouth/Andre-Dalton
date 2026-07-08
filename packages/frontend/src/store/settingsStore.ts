@@ -29,7 +29,7 @@ export const useSettingsStore = create<SettingsState>()(
       setActivePanel: (panel) => set({ activePanel: panel }),
     }),
     {
-      name: 'aurora-settings',
+      name: 'jargiin-settings',
     },
   ),
 );

@@ -33,16 +33,16 @@ export function ModelRouter() {
 
   const statusDot = (id: string) => {
     const result = testResults[id];
-    if (!result) return 'bg-aurora-border/40';
-    if (result === 'ok') return 'bg-aurora-success';
-    if (result === 'unconfigured') return 'bg-aurora-warn';
-    return 'bg-aurora-danger';
+    if (!result) return 'bg-jargiin-border/40';
+    if (result === 'ok') return 'bg-jargiin-success';
+    if (result === 'unconfigured') return 'bg-jargiin-warn';
+    return 'bg-jargiin-danger';
   };
 
   return (
     <Panel title="Model Router" aria-label="AI provider configuration panel">
       {providers.length === 0 ? (
-        <p className="text-aurora-muted text-sm font-mono">Connecting to backend…</p>
+        <p className="text-jargiin-muted text-sm font-mono">Connecting to backend…</p>
       ) : (
         <ul className="space-y-2" role="list" aria-label="Available AI providers">
           {providers.map((p) => (
@@ -52,9 +52,9 @@ export function ModelRouter() {
                   className={`w-2 h-2 rounded-full shrink-0 ${statusDot(p.id)}`}
                   aria-hidden="true"
                 />
-                <span className="text-sm font-mono text-aurora-white truncate">{p.displayName}</span>
+                <span className="text-sm font-mono text-jargiin-white truncate">{p.displayName}</span>
                 {!p.configured && (
-                  <span className="text-xs text-aurora-warn font-mono">(unconfigured)</span>
+                  <span className="text-xs text-jargiin-warn font-mono">(unconfigured)</span>
                 )}
               </div>
               <Button

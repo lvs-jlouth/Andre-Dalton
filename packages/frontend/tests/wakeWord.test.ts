@@ -104,8 +104,8 @@ describe('WakeWord fuzzy matching — custom phrases', () => {
     expect(matchesPhrase('go time', 'Go time')).toBe(true);
   });
 
-  it('matches custom phrase "Hey AURORA"', () => {
-    expect(matchesPhrase('hey aurora activate', 'Hey AURORA')).toBe(true);
+  it('matches custom phrase "Hey J.A.R.G.I.I.N."', () => {
+    expect(matchesPhrase('hey jargiin activate', 'Hey J.A.R.G.I.I.N.')).toBe(true);
   });
 
   it('matches two-character minimum phrase', () => {

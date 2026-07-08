@@ -33,7 +33,7 @@ export function useAssistant() {
       try {
         const response = await sendMessage({
           messages,
-          systemPrompt: `You are AURORA, a calm, patient, and highly capable personal AI assistant. 
+          systemPrompt: `You are J.A.R.G.I.I.N., a calm, patient, and highly capable personal AI assistant. 
 You are speaking with ${profile.preferredName}. 
 Always respond clearly and concisely. 
 If unsure about a request, calmly ask a single clarifying question.

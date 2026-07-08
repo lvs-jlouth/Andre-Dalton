@@ -22,14 +22,14 @@ export function StatusBar() {
 
   return (
     <header
-      className="sticky top-0 z-50 bg-aurora-panel/90 backdrop-blur-sm border-b border-aurora-border/50"
+      className="sticky top-0 z-50 bg-jargiin-panel/90 backdrop-blur-sm border-b border-jargiin-border/50"
       role="banner"
     >
       <div className="flex items-center justify-between px-4 py-2 max-w-7xl mx-auto">
         {/* Logo / identity */}
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg bg-aurora-cyan/20 border border-aurora-cyan/40 flex items-center justify-center"
+            className="w-8 h-8 rounded-lg bg-jargiin-cyan/20 border border-jargiin-cyan/40 flex items-center justify-center"
             aria-hidden="true"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -37,8 +37,8 @@ export function StatusBar() {
               <circle cx="8" cy="8" r="2" fill="#00d4ff" opacity="0.6" />
             </svg>
           </div>
-          <span className="text-sm font-mono font-bold tracking-widest text-aurora-cyan">
-            AURORA
+          <span className="text-sm font-mono font-bold tracking-widest text-jargiin-cyan">
+            J.A.R.G.I.I.N.
           </span>
         </div>
 
@@ -53,11 +53,11 @@ export function StatusBar() {
                   className={`
                     px-3 py-1.5 rounded text-xs font-mono tracking-wide
                     transition-colors duration-150
-                    focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 focus:ring-offset-1 focus:ring-offset-aurora-panel
+                    focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 focus:ring-offset-1 focus:ring-offset-jargiin-panel
                     min-h-[36px]
                     ${activePanel === item.id
-                      ? 'bg-aurora-cyan/20 text-aurora-cyan border border-aurora-cyan/40'
-                      : 'text-aurora-muted hover:text-aurora-white hover:bg-aurora-border/20 border border-transparent'}
+                      ? 'bg-jargiin-cyan/20 text-jargiin-cyan border border-jargiin-cyan/40'
+                      : 'text-jargiin-muted hover:text-jargiin-white hover:bg-jargiin-border/20 border border-transparent'}
                   `}
                 >
                   <span className="hidden sm:inline">{item.label}</span>
@@ -72,16 +72,16 @@ export function StatusBar() {
         <div aria-live="polite" aria-atomic="true" className="flex items-center gap-2">
           <span
             className={`w-2 h-2 rounded-full ${
-              status === 'idle' ? 'bg-aurora-success' :
-              status === 'error' ? 'bg-aurora-danger' :
-              'bg-aurora-cyan animate-pulse'
+              status === 'idle' ? 'bg-jargiin-success' :
+              status === 'error' ? 'bg-jargiin-danger' :
+              'bg-jargiin-cyan animate-pulse'
             }`}
             aria-hidden="true"
           />
-          <span className="text-xs font-mono text-aurora-muted capitalize hidden sm:inline">
+          <span className="text-xs font-mono text-jargiin-muted capitalize hidden sm:inline">
             {status}
           </span>
-          <span className="sr-only">AURORA status: {status}</span>
+          <span className="sr-only">J.A.R.G.I.I.N. status: {status}</span>
         </div>
       </div>
     </header>

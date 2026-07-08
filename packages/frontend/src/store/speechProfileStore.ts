@@ -123,6 +123,6 @@ export const useSpeechProfileStore = create<SpeechProfileState>()(
 
       markSaved: () => set({ isDirty: false }),
     }),
-    { name: 'aurora-speech-profile' },
+    { name: 'jargiin-speech-profile' },
   ),
 );

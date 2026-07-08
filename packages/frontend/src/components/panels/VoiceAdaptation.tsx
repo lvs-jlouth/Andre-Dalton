@@ -66,7 +66,7 @@ export function VoiceAdaptation() {
         <section aria-labelledby="wake-word-heading">
           <h3
             id="wake-word-heading"
-            className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-muted mb-3"
+            className="text-xs font-mono font-semibold tracking-widest uppercase text-jargiin-muted mb-3"
           >
             Wake Word / Phrase
           </h3>
@@ -74,9 +74,9 @@ export function VoiceAdaptation() {
           {/* Enable toggle */}
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
-              <p className="font-mono text-aurora-white text-sm">Enable wake phrase</p>
-              <p id="wake-word-desc" className="text-aurora-muted text-xs mt-0.5">
-                When enabled, AURORA listens passively for your phrase and activates
+              <p className="font-mono text-jargiin-white text-sm">Enable wake phrase</p>
+              <p id="wake-word-desc" className="text-jargiin-muted text-xs mt-0.5">
+                When enabled, J.A.R.G.I.I.N. listens passively for your phrase and activates
                 automatically — no button needed. Off by default.
               </p>
             </div>
@@ -88,8 +88,8 @@ export function VoiceAdaptation() {
               className={`
                 relative inline-flex h-6 w-11 shrink-0 items-center rounded-full
                 transition-colors duration-200
-                focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 focus:ring-offset-2 focus:ring-offset-aurora-panel
-                ${profile.wakeWord.enabled ? 'bg-aurora-cyan/60' : 'bg-aurora-border/40'}
+                focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 focus:ring-offset-2 focus:ring-offset-jargiin-panel
+                ${profile.wakeWord.enabled ? 'bg-jargiin-cyan/60' : 'bg-jargiin-border/40'}
               `}
             >
               <span
@@ -107,8 +107,8 @@ export function VoiceAdaptation() {
           {/* Phrase editor — shown regardless of enabled state so user can pre-configure */}
           <div className="space-y-3 pl-0.5">
             <div>
-              <label htmlFor="wake-phrase" className="block text-aurora-muted font-mono text-xs mb-1">
-                Wake phrase (current: "<span className="text-aurora-cyan">{profile.wakeWord.phrase}</span>")
+              <label htmlFor="wake-phrase" className="block text-jargiin-muted font-mono text-xs mb-1">
+                Wake phrase (current: "<span className="text-jargiin-cyan">{profile.wakeWord.phrase}</span>")
               </label>
               <div className="flex gap-2">
                 <input
@@ -117,11 +117,11 @@ export function VoiceAdaptation() {
                   value={wakePhraseDraft}
                   onChange={(e) => setWakePhraseDraft(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyWakePhrase(); } }}
-                  placeholder='e.g. Hey J, Hey AURORA, Go time…'
+                  placeholder='e.g. Hey J, Hey J.A.R.G.I.I.N., Go time…'
                   aria-describedby="wake-phrase-hint"
                   minLength={2}
                   maxLength={40}
-                  className="flex-1 bg-aurora-bg/60 border border-aurora-border/60 rounded px-3 py-1.5 font-mono text-sm text-aurora-white focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 min-h-[44px]"
+                  className="flex-1 bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-3 py-1.5 font-mono text-sm text-jargiin-white focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 min-h-[44px]"
                 />
                 <Button
                   variant="secondary"
@@ -133,16 +133,16 @@ export function VoiceAdaptation() {
                   Save
                 </Button>
               </div>
-              <p id="wake-phrase-hint" className="text-aurora-muted text-xs mt-1">
+              <p id="wake-phrase-hint" className="text-jargiin-muted text-xs mt-1">
                 Minimum 2 characters. Short, distinct phrases work best (e.g. "Hey J").
               </p>
             </div>
 
             {/* Fuzzy sensitivity */}
             <div>
-              <label htmlFor="wake-sensitivity" className="block text-aurora-muted font-mono text-xs mb-1">
+              <label htmlFor="wake-sensitivity" className="block text-jargiin-muted font-mono text-xs mb-1">
                 Match sensitivity:{' '}
-                <span className="text-aurora-white">
+                <span className="text-jargiin-white">
                   {profile.wakeWord.sensitivity >= 0.9
                     ? 'Strict (exact match)'
                     : profile.wakeWord.sensitivity >= 0.7
@@ -158,7 +158,7 @@ export function VoiceAdaptation() {
                 step={0.05}
                 value={profile.wakeWord.sensitivity}
                 onChange={(e) => setWakeWord({ sensitivity: Number(e.target.value) })}
-                className="w-full accent-aurora-cyan"
+                className="w-full accent-jargiin-cyan"
                 aria-valuemin={0.4}
                 aria-valuemax={1.0}
                 aria-valuenow={profile.wakeWord.sensitivity}
@@ -170,11 +170,11 @@ export function VoiceAdaptation() {
                     : 'Relaxed'
                 }
               />
-              <div className="flex justify-between text-aurora-muted text-xs mt-0.5 font-mono">
+              <div className="flex justify-between text-jargiin-muted text-xs mt-0.5 font-mono">
                 <span>← More permissive</span>
                 <span>More exact →</span>
               </div>
-              <p className="text-aurora-muted text-xs mt-1">
+              <p className="text-jargiin-muted text-xs mt-1">
                 Lower sensitivity accepts approximate speech — useful if your phrasing varies.
               </p>
             </div>
@@ -182,20 +182,20 @@ export function VoiceAdaptation() {
         </section>
 
         {/* Divider */}
-        <hr className="border-aurora-border/30" />
+        <hr className="border-jargiin-border/30" />
 
         {/* ── Basic profile ────────────────────────────────────────────── */}
         <section aria-labelledby="basic-profile-heading">
           <h3
             id="basic-profile-heading"
-            className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-muted mb-3"
+            className="text-xs font-mono font-semibold tracking-widest uppercase text-jargiin-muted mb-3"
           >
             Speech Profile
           </h3>
 
           {/* Preferred name */}
           <div className="mb-4">
-            <label htmlFor="preferred-name" className="block text-aurora-muted font-mono text-xs mb-1">
+            <label htmlFor="preferred-name" className="block text-jargiin-muted font-mono text-xs mb-1">
               Preferred name
             </label>
             <input
@@ -203,14 +203,14 @@ export function VoiceAdaptation() {
               type="text"
               value={profile.preferredName}
               onChange={(e) => updateProfile({ preferredName: e.target.value })}
-              className="w-full bg-aurora-bg/60 border border-aurora-border/60 rounded px-3 py-1.5 font-mono text-sm text-aurora-white focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 min-h-[44px]"
+              className="w-full bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-3 py-1.5 font-mono text-sm text-jargiin-white focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 min-h-[44px]"
             />
           </div>
 
           {/* Speech pace */}
           <div className="mb-4">
             <fieldset>
-              <legend className="text-aurora-muted font-mono text-xs mb-1">Speech pace</legend>
+              <legend className="text-jargiin-muted font-mono text-xs mb-1">Speech pace</legend>
               <div className="flex flex-wrap gap-2">
                 {PACE_OPTIONS.map((opt) => (
                   <label key={opt.value} className="flex items-center gap-1 cursor-pointer min-h-[36px]">
@@ -220,9 +220,9 @@ export function VoiceAdaptation() {
                       value={opt.value}
                       checked={profile.speechPace === opt.value}
                       onChange={() => updateProfile({ speechPace: opt.value })}
-                      className="accent-aurora-cyan"
+                      className="accent-jargiin-cyan"
                     />
-                    <span className="font-mono text-aurora-white">{opt.label}</span>
+                    <span className="font-mono text-jargiin-white">{opt.label}</span>
                   </label>
                 ))}
               </div>
@@ -231,7 +231,7 @@ export function VoiceAdaptation() {
 
           {/* Pause tolerance */}
           <div className="mb-4">
-            <label htmlFor="pause-tolerance" className="block text-aurora-muted font-mono text-xs mb-1">
+            <label htmlFor="pause-tolerance" className="block text-jargiin-muted font-mono text-xs mb-1">
               Pause tolerance: {(profile.pauseToleranceMs / 1000).toFixed(1)}s
             </label>
             <input
@@ -242,7 +242,7 @@ export function VoiceAdaptation() {
               step={250}
               value={profile.pauseToleranceMs}
               onChange={(e) => updateProfile({ pauseToleranceMs: Number(e.target.value) })}
-              className="w-full accent-aurora-cyan"
+              className="w-full accent-jargiin-cyan"
               aria-valuemin={500}
               aria-valuemax={10000}
               aria-valuenow={profile.pauseToleranceMs}
@@ -252,14 +252,14 @@ export function VoiceAdaptation() {
 
           {/* Clarification mode */}
           <div className="mb-4">
-            <label htmlFor="clarification-mode" className="block text-aurora-muted font-mono text-xs mb-1">
+            <label htmlFor="clarification-mode" className="block text-jargiin-muted font-mono text-xs mb-1">
               Clarification mode
             </label>
             <select
               id="clarification-mode"
               value={profile.clarificationMode}
               onChange={(e) => updateProfile({ clarificationMode: e.target.value as ClarificationMode })}
-              className="w-full bg-aurora-bg/60 border border-aurora-border/60 rounded px-3 py-1.5 font-mono text-sm text-aurora-white focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50 min-h-[44px]"
+              className="w-full bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-3 py-1.5 font-mono text-sm text-jargiin-white focus:outline-none focus:ring-2 focus:ring-jargiin-cyan/50 min-h-[44px]"
             >
               {CLARIFICATION_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -269,13 +269,13 @@ export function VoiceAdaptation() {
         </section>
 
         {/* Divider */}
-        <hr className="border-aurora-border/30" />
+        <hr className="border-jargiin-border/30" />
 
         {/* ── Word substitutions ───────────────────────────────────────── */}
         <section aria-labelledby="substitutions-heading">
           <h3
             id="substitutions-heading"
-            className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-muted mb-2"
+            className="text-xs font-mono font-semibold tracking-widest uppercase text-jargiin-muted mb-2"
           >
             Word Substitutions
           </h3>
@@ -283,9 +283,9 @@ export function VoiceAdaptation() {
             {profile.substitutions.map((sub) => (
               <li key={sub.heard} className="flex items-center justify-between gap-2 text-xs font-mono">
                 <span>
-                  <span className="text-aurora-warn">"{sub.heard}"</span>
+                  <span className="text-jargiin-warn">"{sub.heard}"</span>
                   {' → '}
-                  <span className="text-aurora-cyan">"{sub.intended}"</span>
+                  <span className="text-jargiin-cyan">"{sub.intended}"</span>
                 </span>
                 <Button
                   variant="ghost"
@@ -305,7 +305,7 @@ export function VoiceAdaptation() {
               onChange={(e) => setNewHeard(e.target.value)}
               placeholder="I say…"
               aria-label="Word or phrase I say"
-              className="flex-1 bg-aurora-bg/60 border border-aurora-border/60 rounded px-2 py-1 text-xs font-mono text-aurora-white focus:outline-none focus:ring-1 focus:ring-aurora-cyan/50 min-h-[36px]"
+              className="flex-1 bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-2 py-1 text-xs font-mono text-jargiin-white focus:outline-none focus:ring-1 focus:ring-jargiin-cyan/50 min-h-[36px]"
             />
             <input
               type="text"
@@ -313,7 +313,7 @@ export function VoiceAdaptation() {
               onChange={(e) => setNewIntended(e.target.value)}
               placeholder="Means…"
               aria-label="Intended word or phrase"
-              className="flex-1 bg-aurora-bg/60 border border-aurora-border/60 rounded px-2 py-1 text-xs font-mono text-aurora-white focus:outline-none focus:ring-1 focus:ring-aurora-cyan/50 min-h-[36px]"
+              className="flex-1 bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-2 py-1 text-xs font-mono text-jargiin-white focus:outline-none focus:ring-1 focus:ring-jargiin-cyan/50 min-h-[36px]"
             />
             <Button variant="secondary" size="sm" onClick={addSub} aria-label="Add substitution">
               +
@@ -325,7 +325,7 @@ export function VoiceAdaptation() {
         <section aria-labelledby="vocab-heading">
           <h3
             id="vocab-heading"
-            className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-muted mb-2"
+            className="text-xs font-mono font-semibold tracking-widest uppercase text-jargiin-muted mb-2"
           >
             Custom Vocabulary
           </h3>
@@ -333,13 +333,13 @@ export function VoiceAdaptation() {
             {profile.customVocabulary.map((word) => (
               <span
                 key={word}
-                className="inline-flex items-center gap-1 bg-aurora-teal/20 border border-aurora-teal/30 px-2 py-0.5 rounded-full text-xs font-mono text-aurora-teal"
+                className="inline-flex items-center gap-1 bg-jargiin-teal/20 border border-jargiin-teal/30 px-2 py-0.5 rounded-full text-xs font-mono text-jargiin-teal"
               >
                 {word}
                 <button
                   onClick={() => removeVocabularyWord(word)}
                   aria-label={`Remove vocabulary word: ${word}`}
-                  className="text-aurora-teal/60 hover:text-aurora-danger focus:outline-none focus:ring-1 focus:ring-aurora-cyan/50 rounded"
+                  className="text-jargiin-teal/60 hover:text-jargiin-danger focus:outline-none focus:ring-1 focus:ring-jargiin-cyan/50 rounded"
                 >
                   ×
                 </button>
@@ -354,7 +354,7 @@ export function VoiceAdaptation() {
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addWord(); } }}
               placeholder="Add a word…"
               aria-label="New vocabulary word"
-              className="flex-1 bg-aurora-bg/60 border border-aurora-border/60 rounded px-2 py-1 text-xs font-mono text-aurora-white focus:outline-none focus:ring-1 focus:ring-aurora-cyan/50 min-h-[36px]"
+              className="flex-1 bg-jargiin-bg/60 border border-jargiin-border/60 rounded px-2 py-1 text-xs font-mono text-jargiin-white focus:outline-none focus:ring-1 focus:ring-jargiin-cyan/50 min-h-[36px]"
             />
             <Button variant="secondary" size="sm" onClick={addWord} aria-label="Add vocabulary word">
               +
@@ -363,7 +363,7 @@ export function VoiceAdaptation() {
         </section>
 
         {isDirty && (
-          <p role="status" className="text-aurora-warn text-xs font-mono">
+          <p role="status" className="text-jargiin-warn text-xs font-mono">
             ● Unsaved changes — will persist locally in your browser.
           </p>
         )}

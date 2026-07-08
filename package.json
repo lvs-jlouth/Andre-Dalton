@@ -1,8 +1,8 @@
 {
-  "name": "aurora-assistant",
+  "name": "jargiin-assistant",
   "version": "1.0.0",
   "private": true,
-  "description": "AURORA – a secure, accessible, voice-first AI assistant",
+  "description": "J.A.R.G.I.I.N. – a secure, accessible, voice-first AI assistant",
   "workspaces": [
     "packages/backend",
     "packages/frontend"

@@ -8,7 +8,7 @@ interface PanelProps {
   'aria-label'?: string;
 }
 
-/** Glassmorphism panel — the base building block of the AURORA HUD. */
+/** Glassmorphism panel — the base building block of the J.A.R.G.I.I.N. HUD. */
 export function Panel({ children, title, className = '', role, 'aria-label': ariaLabel }: PanelProps) {
   return (
     <section
@@ -16,15 +16,15 @@ export function Panel({ children, title, className = '', role, 'aria-label': ari
       aria-label={ariaLabel ?? title}
       className={`
         relative overflow-hidden
-        bg-aurora-panel/80 backdrop-blur-sm
-        border border-aurora-border/60
+        bg-jargiin-panel/80 backdrop-blur-sm
+        border border-jargiin-border/60
         rounded-xl shadow-lg shadow-black/40
         ${className}
       `}
     >
       {title && (
-        <header className="px-4 py-2 border-b border-aurora-border/40">
-          <h2 className="text-xs font-mono font-semibold tracking-widest uppercase text-aurora-cyan/80">
+        <header className="px-4 py-2 border-b border-jargiin-border/40">
+          <h2 className="text-xs font-mono font-semibold tracking-widest uppercase text-jargiin-cyan/80">
             {title}
           </h2>
         </header>
