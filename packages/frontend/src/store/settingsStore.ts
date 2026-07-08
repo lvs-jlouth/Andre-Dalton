@@ -6,7 +6,7 @@ import { DEFAULT_ACCESSIBILITY, DEFAULT_PRIVACY } from '../types/settings.js';
 interface SettingsState {
   accessibility: AccessibilitySettings;
   privacy: PrivacySettings;
-  activePanel: 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy' | 'microsoft';
+  activePanel: 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy' | 'microsoft' | 'personality';
   /** Boot mode — shows the configuration/training menu when active */
   bootMode: boolean;
 
