@@ -12,20 +12,22 @@
 |------|---------|
 | Node.js | ≥ 18 |
 | npm | ≥ 9 |
+| Git | Current stable |
+| Windows PowerShell | 5.1+ (Windows 10/11) |
 
 ### 1. Clone and install
 
 ```bash
 git clone https://github.com/lvs-jlouth/Andre-Dalton.git
 cd Andre-Dalton
-npm install          # installs all workspace packages
+npm install
 ```
 
 ### 2. Configure environment
 
-```bash
-cp .env.example packages/backend/.env
-# Edit packages/backend/.env — add at least one LLM provider API key
+```powershell
+Copy-Item .env.example packages\backend\.env
+# Edit packages\backend\.env and set at least one provider key
 ```
 
 ### 3. Run in development
@@ -50,6 +52,93 @@ Then open [http://localhost:5173](http://localhost:5173) in your browser.
 npm test --workspace=packages/backend   # 55 tests
 npm test --workspace=packages/frontend  # 38 tests
 ```
+
+### 5. Install Methods of Procedure (MOP)
+
+#### #1 — Homelab (Windows desktop, full capabilities)
+
+1. Install Node.js LTS, Git, and Edge/Chrome on the host.
+2. Clone and install:
+
+   ```powershell
+   git clone https://github.com/lvs-jlouth/Andre-Dalton.git
+   cd Andre-Dalton
+   npm install
+   Copy-Item .env.example packages\backend\.env
+   ```
+
+3. Edit `packages\backend\.env`:
+   - Set at least one LLM provider key (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GEMINI_API_KEY`, `AZURE_OPENAI_*`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`, or local `LOCAL_LLM_BASE_URL`).
+   - Set `STT_PROVIDER=browser` (or `deepgram` + `DEEPGRAM_API_KEY`).
+   - Set `TTS_PROVIDER=browser` (or `elevenlabs` + `ELEVENLABS_API_KEY`).
+   - Keep `DEBUG_MODE=false` unless active troubleshooting is required.
+4. Start services in two terminals:
+
+   ```powershell
+   npm run dev --workspace=packages/backend
+   npm run dev --workspace=packages/frontend
+   ```
+
+5. Open `http://localhost:5173`, grant microphone access, and validate provider switch, STT, TTS, and wake-word behavior.
+
+#### #2 — QNAP NAS (Linux Station/VM install)
+
+> This repository does not currently include a Dockerfile/compose stack, so this MOP uses a Linux guest on QNAP (Linux Station or Virtualization Station) for a full-feature install.
+
+1. Create an Ubuntu guest on QNAP and install prerequisites:
+
+   ```bash
+   sudo apt update
+   sudo apt install -y git curl
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt install -y nodejs
+   node -v && npm -v
+   ```
+
+2. Clone and configure:
+
+   ```bash
+   git clone https://github.com/lvs-jlouth/Andre-Dalton.git
+   cd Andre-Dalton
+   npm install
+   cp .env.example packages/backend/.env
+   ```
+
+3. Set `packages/backend/.env` the same way as Homelab, then update:
+   - `HOST=0.0.0.0`
+   - `CORS_ORIGIN=http://<qnap-or-frontend-host>:5173`
+4. Start backend and frontend, then access from a browser at `http://<guest-ip>:5173`.
+5. For always-on lab usage, run both services under your process manager of choice (for example, `systemd` units in the guest).
+
+#### #3 — Azure (backend on App Service + frontend on Static Web App)
+
+1. Provision resources (example names):
+
+   ```bash
+   az group create -n rg-aurora -l eastus
+   az appservice plan create -g rg-aurora -n plan-aurora --is-linux --sku B1
+   az webapp create -g rg-aurora -p plan-aurora -n aurora-api-prod --runtime "NODE|20-lts"
+   ```
+
+2. Configure backend startup and app settings:
+
+   ```powershell
+   az webapp config set -g rg-aurora -n aurora-api-prod --startup-file "npm run start --workspace=packages/backend"
+   az webapp config appsettings set -g rg-aurora -n aurora-api-prod --settings `
+     PORT=8080 HOST=0.0.0.0 NODE_ENV=production DEBUG_MODE=false PERSIST_TRANSCRIPTS=false `
+     OPENAI_API_KEY="<value>" ANTHROPIC_API_KEY="<value>" GOOGLE_GEMINI_API_KEY="<value>" `
+     AZURE_OPENAI_API_KEY="<value>" AZURE_OPENAI_ENDPOINT="<value>" AZURE_OPENAI_DEPLOYMENT="<value>" `
+     MISTRAL_API_KEY="<value>" OPENROUTER_API_KEY="<value>" LOCAL_LLM_BASE_URL="http://localhost:11434"
+   ```
+
+3. Deploy code to App Service from the repo root:
+
+   ```bash
+   az webapp up -g rg-aurora -n aurora-api-prod --runtime "NODE|20-lts"
+   ```
+
+4. Deploy frontend to Azure Static Web Apps and set the frontend API base URL to `https://aurora-api-prod.azurewebsites.net`.
+5. Update backend `CORS_ORIGIN` to your Static Web App URL and confirm `/health`, UI load, message flow, STT, and TTS.
 
 ---
 
@@ -113,11 +202,11 @@ AURORA uses a provider abstraction layer. Configure each via environment variabl
 |----------|-------------|
 | OpenAI | `OPENAI_API_KEY` |
 | Anthropic | `ANTHROPIC_API_KEY` |
-| Google Gemini | `GEMINI_API_KEY` |
+| Google Gemini | `GOOGLE_GEMINI_API_KEY` |
 | Azure OpenAI | `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` |
 | Mistral | `MISTRAL_API_KEY` |
 | OpenRouter | `OPENROUTER_API_KEY` |
-| Ollama (local) | No key — set `OLLAMA_BASE_URL` (default: `http://localhost:11434`) |
+| Ollama (local) | No key — set `LOCAL_LLM_BASE_URL` (default: `http://localhost:11434`) |
 
 ---
 
@@ -259,4 +348,3 @@ No copyrighted names, dialogue, visuals, logos, or fictional canon from any fran
 ## License
 
 MIT
-
