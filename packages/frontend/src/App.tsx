@@ -18,6 +18,7 @@ import './index.css';
  */
 export default function App() {
   const activePanel = useSettingsStore((s) => s.activePanel);
+  const bootMode = useSettingsStore((s) => s.bootMode);
 
   return (
     <HUDLayout>
@@ -29,15 +30,22 @@ export default function App() {
         Skip to main content
       </a>
 
-      <StatusBar />
+      {/* Navigation menu — only visible in boot/configuration mode */}
+      {bootMode && <StatusBar />}
 
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-6">
-        {activePanel === 'dashboard' && <DashboardView />}
-        {activePanel === 'providers' && <ProvidersView />}
-        {activePanel === 'voice' && <VoiceView />}
-        {activePanel === 'accessibility' && <AccessibilityView />}
-        {activePanel === 'privacy' && <PrivacyView />}
-        {activePanel === 'microsoft' && <MicrosoftView />}
+        {bootMode ? (
+          <>
+            {activePanel === 'dashboard' && <DashboardView />}
+            {activePanel === 'providers' && <ProvidersView />}
+            {activePanel === 'voice' && <VoiceView />}
+            {activePanel === 'accessibility' && <AccessibilityView />}
+            {activePanel === 'privacy' && <PrivacyView />}
+            {activePanel === 'microsoft' && <MicrosoftView />}
+          </>
+        ) : (
+          <DashboardView />
+        )}
       </main>
     </HUDLayout>
   );

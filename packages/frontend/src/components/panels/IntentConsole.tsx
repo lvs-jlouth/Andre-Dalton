@@ -28,10 +28,22 @@ export function IntentConsole() {
   const { sttStatus, partialTranscript, startListening, stopListening } = useVoiceInput({
     onResult: async (result) => {
       if (result.transcript.trim()) {
+        // Boot mode voice commands
+        const normalized = result.transcript.trim().toLowerCase();
+        if (normalized === 'open your boot') {
+          useSettingsStore.getState().setBootMode(true);
+          resumeMonitoring();
+          return;
+        }
+        if (normalized === 'close your boot') {
+          useSettingsStore.getState().setBootMode(false);
+          resumeMonitoring();
+          return;
+        }
+
         const reply = await sendUserMessage(result.transcript);
         if (reply) {
           await speak(reply);
-          // Resume wake word monitoring after a completed exchange
           resumeMonitoring();
         }
       }
@@ -65,6 +77,20 @@ export function IntentConsole() {
     const text = inputText.trim();
     if (!text || isBusy) return;
     setInputText('');
+
+    // Boot mode commands — intercept before sending to assistant
+    const normalized = text.toLowerCase();
+    if (normalized === 'open your boot') {
+      useSettingsStore.getState().setBootMode(true);
+      inputRef.current?.focus();
+      return;
+    }
+    if (normalized === 'close your boot') {
+      useSettingsStore.getState().setBootMode(false);
+      inputRef.current?.focus();
+      return;
+    }
+
     const reply = await sendUserMessage(text);
     if (reply) {
       await speak(reply);
