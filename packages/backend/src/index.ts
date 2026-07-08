@@ -12,6 +12,9 @@ import { assistantRoutes } from './routes/assistant.js';
 import { speechRoutes } from './routes/speech.js';
 import { profileRoutes } from './routes/profile.js';
 import { settingsRoutes } from './routes/settings.js';
+import { authRoutes } from './routes/auth.js';
+import { oneDriveRoutes } from './routes/storage.js';
+import { office365Routes } from './routes/office365.js';
 
 const env = getEnv();
 const log = createLogger('server');
@@ -40,11 +43,14 @@ async function start(): Promise<void> {
 
   // Routes
   await app.register(healthRoutes, { prefix: '/health' });
+  await app.register(authRoutes, { prefix: '/auth' });
   await app.register(providerRoutes, { prefix: '/providers' });
   await app.register(assistantRoutes, { prefix: '/assistant' });
   await app.register(speechRoutes, { prefix: '/speech' });
   await app.register(profileRoutes, { prefix: '/profile' });
   await app.register(settingsRoutes, { prefix: '/settings' });
+  await app.register(oneDriveRoutes, { prefix: '/storage' });
+  await app.register(office365Routes, { prefix: '/office' });
 
   try {
     await app.listen({ port: env.PORT, host: env.HOST });

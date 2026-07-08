@@ -6,7 +6,7 @@ import { DEFAULT_ACCESSIBILITY, DEFAULT_PRIVACY } from '../types/settings.js';
 interface SettingsState {
   accessibility: AccessibilitySettings;
   privacy: PrivacySettings;
-  activePanel: 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy';
+  activePanel: 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy' | 'microsoft';
 
   updateAccessibility: (patch: Partial<AccessibilitySettings>) => void;
   updatePrivacy: (patch: Partial<PrivacySettings>) => void;

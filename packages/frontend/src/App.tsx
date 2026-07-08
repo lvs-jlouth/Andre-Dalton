@@ -8,6 +8,7 @@ import { ModelRouter } from './components/panels/ModelRouter.js';
 import { VoiceAdaptation } from './components/panels/VoiceAdaptation.js';
 import { AccessibilitySettingsPanel } from './components/settings/AccessibilitySettings.js';
 import { PrivacySettingsPanel } from './components/settings/PrivacySettings.js';
+import { MicrosoftIntegration } from './components/microsoft/MicrosoftIntegration.js';
 import { useSettingsStore } from './store/settingsStore.js';
 import './index.css';
 
@@ -36,6 +37,7 @@ export default function App() {
         {activePanel === 'voice' && <VoiceView />}
         {activePanel === 'accessibility' && <AccessibilityView />}
         {activePanel === 'privacy' && <PrivacyView />}
+        {activePanel === 'microsoft' && <MicrosoftView />}
       </main>
     </HUDLayout>
   );
@@ -89,6 +91,14 @@ function PrivacyView() {
   return (
     <div className="max-w-xl mx-auto">
       <PrivacySettingsPanel />
+    </div>
+  );
+}
+
+function MicrosoftView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <MicrosoftIntegration />
     </div>
   );
 }
