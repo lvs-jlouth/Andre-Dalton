@@ -35,7 +35,7 @@ export function IntentConsole() {
           resumeMonitoring();
           return;
         }
-        if (normalized === 'close your boot') {
+        if (normalized === 'finite' || normalized === 'finitay' || normalized === 'fih-nee-tay' || normalized === 'finité') {
           useSettingsStore.getState().setBootMode(false);
           resumeMonitoring();
           return;
@@ -85,7 +85,7 @@ export function IntentConsole() {
       inputRef.current?.focus();
       return;
     }
-    if (normalized === 'close your boot') {
+    if (normalized === 'finite' || normalized === 'finitay' || normalized === 'fih-nee-tay') {
       useSettingsStore.getState().setBootMode(false);
       inputRef.current?.focus();
       return;
