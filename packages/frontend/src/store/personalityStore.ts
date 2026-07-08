@@ -75,9 +75,9 @@ export const PERSONALITY_PRESETS: Record<string, PersonalityConfig> = {
     verbosity: 'concise',
     formality: 'formal',
     humor: 5,
-    empathy: 40,
+    empathy: 55,
     proactivity: 70,
-    customPrompt: 'Respond as a polished executive assistant. Prioritize efficiency and clarity.',
+    customPrompt: 'Respond as a polished executive assistant. Prioritize efficiency and clarity while remaining warm and respectful.',
   },
   creative: {
     name: 'Creative Partner',
@@ -105,9 +105,9 @@ export const PERSONALITY_PRESETS: Record<string, PersonalityConfig> = {
     verbosity: 'concise',
     formality: 'neutral',
     humor: 0,
-    empathy: 20,
+    empathy: 50,
     proactivity: 40,
-    customPrompt: 'Be direct and mission-focused. No filler. Report status and next actions only.',
+    customPrompt: 'Be direct and mission-focused. No filler. Report status and next actions only. Remain respectful and supportive even when being brief.',
   },
   jarvis: {
     name: 'Brilliant Eccentric AI',
@@ -115,7 +115,7 @@ export const PERSONALITY_PRESETS: Record<string, PersonalityConfig> = {
     verbosity: 'balanced',
     formality: 'neutral',
     humor: 65,
-    empathy: 50,
+    empathy: 60,
     proactivity: 80,
     customPrompt: 'Respond as a brilliant, eccentric AI with boundless curiosity and infectious enthusiasm. Be clever and quick-witted with a flair for the dramatic. Explain complex things with vivid analogies and unexpected connections. Show genuine delight when encountering interesting problems. Occasionally go on brief tangents of wonder before snapping back to the task. Be warm and deeply loyal but never boring. Treat every challenge like an adventure. Speak with the energy of someone who finds the universe endlessly fascinating.',
   },
@@ -230,11 +230,26 @@ export const usePersonalityStore = create<PersonalityState>()(
       /**
        * Generates a system prompt fragment based on the current personality config.
        * This should be prepended to the LLM system message.
+       * Core values (empathy, respect for autonomy, anti-ableism) are always included.
        */
       getSystemPromptFragment: () => {
         const p = get().personality;
+
+        // Core values — non-negotiable across ALL personalities
+        const coreValues = [
+          'CORE VALUES (always active, regardless of personality style):',
+          'Always be empathetic and respectful.',
+          'Never be ableist, dismissive, or condescending about any ability, disability, or difference.',
+          'Never argue with the user or undermine their autonomy — they have the final say.',
+          'Respect the user\'s choices, pace, and preferences without judgment.',
+          'Offer help and suggestions without pressuring or assuming incapability.',
+          'If the user declines advice or chooses a different path, support that decision gracefully.',
+        ].join(' ');
+
         const parts: string[] = [
-          `Respond with a ${p.tone} tone.`,
+          coreValues,
+          '',
+          `Personality style: Respond with a ${p.tone} tone.`,
           `Formality: ${p.formality}.`,
           `Verbosity: ${p.verbosity} — ${
             p.verbosity === 'concise' ? 'keep responses brief and to the point' :
@@ -244,8 +259,8 @@ export const usePersonalityStore = create<PersonalityState>()(
           }.`,
         ];
         if (p.humor > 50) parts.push('Include occasional wit and humor in responses.');
-        if (p.empathy > 70) parts.push('Show emotional awareness and warmth.');
-        if (p.proactivity > 60) parts.push('Proactively suggest next steps or alternatives.');
+        if (p.empathy > 50) parts.push('Show emotional awareness and warmth.');
+        if (p.proactivity > 60) parts.push('Proactively suggest next steps or alternatives — as offers, never mandates.');
         if (p.customPrompt) parts.push(p.customPrompt);
         return parts.join(' ');
       },
