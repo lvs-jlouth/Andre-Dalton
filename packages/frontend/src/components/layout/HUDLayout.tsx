@@ -17,9 +17,9 @@ export function HUDLayout({ children }: HUDLayoutProps) {
     <div
       className={`
         min-h-screen w-full
-        bg-aurora-bg
+        bg-jargiin-bg
         bg-grid-hud bg-grid-hud
-        text-aurora-white
+        text-jargiin-white
         ${highContrast ? 'contrast-more' : ''}
         ${reducedMotion ? 'motion-reduce' : ''}
         ${largeText ? 'text-base' : 'text-sm'}

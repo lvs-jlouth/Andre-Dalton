@@ -1,8 +1,8 @@
 {
-  "name": "@aurora/frontend",
+  "name": "@jargiin/frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "AURORA frontend – React HUD interface",
+  "description": "J.A.R.G.I.I.N. frontend – React HUD interface",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,11 +13,13 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@azure/msal-browser": "^5.17.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.3.3",

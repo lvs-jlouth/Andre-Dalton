@@ -72,9 +72,10 @@ export class WakeWordDetector {
   private _startRecognition(): void {
     if (!this.active) return;
 
-    const SpeechRecognitionCtor =
-      window.SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = (
+      (window as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition
+    );
 
     const rec = new SpeechRecognitionCtor();
     rec.continuous = true;

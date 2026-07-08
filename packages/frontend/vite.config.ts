@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       manifest: {
-        name: 'AURORA Assistant',
-        short_name: 'AURORA',
+        name: 'J.A.R.G.I.I.N. Assistant',
+        short_name: 'J.A.R.G.I.I.N.',
         description: 'Secure, accessible, voice-first AI assistant',
         theme_color: '#0a1628',
         background_color: '#0a1628',

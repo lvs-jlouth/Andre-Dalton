@@ -23,7 +23,7 @@ export function WaveformDisplay() {
       >
         <div
           className={`w-full h-0.5 rounded-full ${
-            isActive ? 'bg-aurora-cyan/60' : 'bg-aurora-border/40'
+            isActive ? 'bg-jargiin-cyan/60' : 'bg-jargiin-border/40'
           } transition-colors duration-300`}
         />
       </div>
@@ -47,8 +47,8 @@ export function WaveformDisplay() {
             className={`
               w-1 rounded-full transition-all duration-300
               ${isActive
-                ? `bg-aurora-cyan/70 animate-waveform`
-                : 'bg-aurora-border/30'}
+                ? `bg-jargiin-cyan/70 animate-waveform`
+                : 'bg-jargiin-border/30'}
             `}
             style={{
               height: isActive ? `${activeHeight}px` : `${baseHeight}px`,

@@ -8,34 +8,50 @@ import { ModelRouter } from './components/panels/ModelRouter.js';
 import { VoiceAdaptation } from './components/panels/VoiceAdaptation.js';
 import { AccessibilitySettingsPanel } from './components/settings/AccessibilitySettings.js';
 import { PrivacySettingsPanel } from './components/settings/PrivacySettings.js';
+import { PersonalitySettingsPanel } from './components/settings/PersonalitySettings.js';
+import { MicrosoftIntegration } from './components/microsoft/MicrosoftIntegration.js';
+import { BrowserSettingsPanel } from './components/settings/BrowserSettings.js';
+import { ResearchAnalysisPanel } from './components/modes/ResearchAnalysisPanel.js';
 import { useSettingsStore } from './store/settingsStore.js';
 import './index.css';
 
 /**
- * AURORA — App root.
+ * J.A.R.G.I.I.N. — App root.
  * Renders the active panel based on navigation state from settingsStore.
  */
 export default function App() {
   const activePanel = useSettingsStore((s) => s.activePanel);
+  const bootMode = useSettingsStore((s) => s.bootMode);
 
   return (
     <HUDLayout>
       {/* Skip-to-content link for keyboard users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-aurora-cyan focus:text-aurora-bg focus:px-4 focus:py-2 focus:rounded-lg font-mono text-sm"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-jargiin-cyan focus:text-jargiin-bg focus:px-4 focus:py-2 focus:rounded-lg font-mono text-sm"
       >
         Skip to main content
       </a>
 
-      <StatusBar />
+      {/* Navigation menu — only visible in boot/configuration mode */}
+      {bootMode && <StatusBar />}
 
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-6">
-        {activePanel === 'dashboard' && <DashboardView />}
-        {activePanel === 'providers' && <ProvidersView />}
-        {activePanel === 'voice' && <VoiceView />}
-        {activePanel === 'accessibility' && <AccessibilityView />}
-        {activePanel === 'privacy' && <PrivacyView />}
+        {bootMode ? (
+          <>
+            {activePanel === 'dashboard' && <DashboardView />}
+            {activePanel === 'providers' && <ProvidersView />}
+            {activePanel === 'personality' && <PersonalityView />}
+            {activePanel === 'voice' && <VoiceView />}
+            {activePanel === 'accessibility' && <AccessibilityView />}
+            {activePanel === 'privacy' && <PrivacyView />}
+            {activePanel === 'microsoft' && <MicrosoftView />}
+            {activePanel === 'browser' && <BrowserView />}
+            {activePanel === 'processing' && <ProcessingView />}
+          </>
+        ) : (
+          <DashboardView />
+        )}
       </main>
     </HUDLayout>
   );
@@ -89,6 +105,38 @@ function PrivacyView() {
   return (
     <div className="max-w-xl mx-auto">
       <PrivacySettingsPanel />
+    </div>
+  );
+}
+
+function MicrosoftView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <MicrosoftIntegration />
+    </div>
+  );
+}
+
+function PersonalityView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <PersonalitySettingsPanel />
+    </div>
+  );
+}
+
+function BrowserView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <BrowserSettingsPanel />
+    </div>
+  );
+}
+
+function ProcessingView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <ResearchAnalysisPanel />
     </div>
   );
 }

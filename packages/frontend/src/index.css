@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── AURORA custom base styles ───────────────────────────────────────── */
+/* ── J.A.R.G.I.I.N. custom base styles ───────────────────────────────────────── */
 @layer base {
   :root {
     color-scheme: dark;
@@ -24,7 +24,7 @@
   /* High-contrast override */
   @media (prefers-contrast: more) {
     :root {
-      --aurora-border: #ffffff;
+      --jargiin-border: #ffffff;
     }
   }
 

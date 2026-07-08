@@ -12,14 +12,14 @@ interface StreamEntry {
 let entryId = 0;
 
 /**
- * SystemsStream — a terminal-style feed of AURORA's operational log.
+ * SystemsStream — a terminal-style feed of J.A.R.G.I.I.N.'s operational log.
  * Privacy note: never shows message content, only operational metadata.
  */
 export function SystemsStream() {
   const status = useAssistantStore((s) => s.status);
   const errorMessage = useAssistantStore((s) => s.errorMessage);
   const [entries, setEntries] = useState<StreamEntry[]>([
-    { id: ++entryId, time: now(), text: 'AURORA systems initialised', type: 'info' },
+    { id: ++entryId, time: now(), text: 'J.A.R.G.I.I.N. systems initialised', type: 'info' },
     { id: ++entryId, time: now(), text: 'Voice subsystem ready', type: 'info' },
     { id: ++entryId, time: now(), text: 'Provider router standby', type: 'info' },
   ]);
@@ -45,23 +45,23 @@ export function SystemsStream() {
   }, [entries]);
 
   const typeColors = {
-    info: 'text-aurora-muted',
-    warn: 'text-aurora-warn',
-    error: 'text-aurora-danger',
-    activity: 'text-aurora-cyan',
+    info: 'text-jargiin-muted',
+    warn: 'text-jargiin-warn',
+    error: 'text-jargiin-danger',
+    activity: 'text-jargiin-cyan',
   };
 
   return (
     <Panel
       title="Systems Stream"
-      aria-label="AURORA systems activity log"
+      aria-label="J.A.R.G.I.I.N. systems activity log"
       aria-live="polite"
       aria-relevant="additions"
     >
       <div className="h-32 overflow-y-auto font-mono text-xs space-y-0.5 scrollbar-thin">
         {entries.map((entry) => (
           <div key={entry.id} className="flex gap-2">
-            <span className="text-aurora-border/60 shrink-0">{entry.time}</span>
+            <span className="text-jargiin-border/60 shrink-0">{entry.time}</span>
             <span className={typeColors[entry.type]}>{entry.text}</span>
           </div>
         ))}

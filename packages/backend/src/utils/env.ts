@@ -9,6 +9,12 @@ export interface AppEnv {
   NODE_ENV: string;
   CORS_ORIGIN: string;
 
+  // Microsoft Entra ID
+  ENTRA_CLIENT_ID?: string;
+  ENTRA_TENANT_ID?: string;
+  ENTRA_CLIENT_SECRET?: string;
+  ENTRA_REDIRECT_URI?: string;
+
   // LLM provider keys — all optional
   OPENAI_API_KEY?: string;
   ANTHROPIC_API_KEY?: string;
@@ -46,6 +52,11 @@ export function getEnv(): AppEnv {
     HOST: process.env['HOST'] ?? '0.0.0.0',
     NODE_ENV: process.env['NODE_ENV'] ?? 'development',
     CORS_ORIGIN: process.env['CORS_ORIGIN'] ?? 'http://localhost:5173',
+
+    ENTRA_CLIENT_ID: process.env['ENTRA_CLIENT_ID'] || undefined,
+    ENTRA_TENANT_ID: process.env['ENTRA_TENANT_ID'] || undefined,
+    ENTRA_CLIENT_SECRET: process.env['ENTRA_CLIENT_SECRET'] || undefined,
+    ENTRA_REDIRECT_URI: process.env['ENTRA_REDIRECT_URI'] || 'http://localhost:5173/auth/callback',
 
     OPENAI_API_KEY: process.env['OPENAI_API_KEY'] || undefined,
     ANTHROPIC_API_KEY: process.env['ANTHROPIC_API_KEY'] || undefined,

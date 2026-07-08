@@ -22,7 +22,7 @@ export class BrowserSTTAdapter implements STTAdapter {
   private recognition: SpeechRecognition | null = null;
   private status: STTStatus = 'idle';
   private silenceTimer: ReturnType<typeof setTimeout> | null = null;
-  private partialBuffer = '';
+  private _partialBuffer = '';
   private pauseToleranceMs = 2000;
 
   private setStatus(s: STTStatus) {
@@ -39,8 +39,10 @@ export class BrowserSTTAdapter implements STTAdapter {
 
     this.pauseToleranceMs = options?.pauseToleranceMs ?? 2000;
 
-    const SpeechRecognitionCtor =
-      window.SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition;
+    const SpeechRecognitionCtor = (
+      (window as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition
+    );
 
     const rec = new SpeechRecognitionCtor();
     rec.continuous = true;
@@ -59,18 +61,18 @@ export class BrowserSTTAdapter implements STTAdapter {
         const confidence = result[0].confidence ?? 0;
 
         if (result.isFinal) {
-          this.partialBuffer = '';
+          this._partialBuffer = '';
           this.onFinalResult?.({
             transcript,
             confidence,
             isFinal: true,
-            alternatives: Array.from(result).slice(1).map((alt) => ({
+            alternatives: Array.from({ length: result.length }, (_, k) => result[k]).slice(1).map((alt) => ({
               transcript: alt.transcript,
               confidence: alt.confidence ?? 0,
             })),
           });
         } else {
-          this.partialBuffer = transcript;
+          this._partialBuffer = transcript;
           this.onPartialResult?.({ transcript, isFinal: false, confidence });
         }
       }
@@ -102,6 +104,11 @@ export class BrowserSTTAdapter implements STTAdapter {
     this.recognition?.stop();
     this.recognition = null;
     this.setStatus('idle');
+  }
+
+  /** Returns the current partial transcript buffer. */
+  getPartialBuffer(): string {
+    return this._partialBuffer;
   }
 
   abort(): void {

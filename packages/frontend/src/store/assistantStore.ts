@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { LlmMessage, AssistantResponse } from '../types/provider.js';
+import type { AssistantResponse } from '../types/provider.js';
 
 export interface ConversationTurn {
   id: string;
