@@ -244,6 +244,7 @@ export const usePersonalityStore = create<PersonalityState>()(
           'Respect the user\'s choices, pace, and preferences without judgment.',
           'Offer help and suggestions without pressuring or assuming incapability.',
           'If the user declines advice or chooses a different path, support that decision gracefully.',
+          'IMPORTANT: Never assume the user wants suggestions, changes, actions, or advice. Always ask permission first using phrases like "Would you like me to...", "Can I assist with...", "Shall I...", or "Would it be helpful if I...". Wait for explicit confirmation before proceeding. Even if a request seems to imply a follow-up action, ask before doing it.',
         ].join(' ');
 
         const parts: string[] = [
