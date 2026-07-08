@@ -11,6 +11,7 @@ import { PrivacySettingsPanel } from './components/settings/PrivacySettings.js';
 import { PersonalitySettingsPanel } from './components/settings/PersonalitySettings.js';
 import { MicrosoftIntegration } from './components/microsoft/MicrosoftIntegration.js';
 import { BrowserSettingsPanel } from './components/settings/BrowserSettings.js';
+import { ResearchAnalysisPanel } from './components/modes/ResearchAnalysisPanel.js';
 import { useSettingsStore } from './store/settingsStore.js';
 import './index.css';
 
@@ -46,6 +47,7 @@ export default function App() {
             {activePanel === 'privacy' && <PrivacyView />}
             {activePanel === 'microsoft' && <MicrosoftView />}
             {activePanel === 'browser' && <BrowserView />}
+            {activePanel === 'processing' && <ProcessingView />}
           </>
         ) : (
           <DashboardView />
@@ -127,6 +129,14 @@ function BrowserView() {
   return (
     <div className="max-w-2xl mx-auto">
       <BrowserSettingsPanel />
+    </div>
+  );
+}
+
+function ProcessingView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <ResearchAnalysisPanel />
     </div>
   );
 }

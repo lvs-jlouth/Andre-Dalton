@@ -1,12 +1,13 @@
 import { useSettingsStore } from '../../store/settingsStore.js';
 import { useAssistantStore } from '../../store/assistantStore.js';
 
-type Panel = 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy' | 'microsoft' | 'personality' | 'browser';
+type Panel = 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy' | 'microsoft' | 'personality' | 'browser' | 'processing';
 
 const NAV_ITEMS: { id: Panel; label: string; shortLabel: string }[] = [
   { id: 'dashboard', label: 'Dashboard', shortLabel: 'Dash' },
   { id: 'providers', label: 'Providers', shortLabel: 'AI' },
   { id: 'personality', label: 'Personality', shortLabel: 'Style' },
+  { id: 'processing', label: 'Research & Analysis', shortLabel: 'R&A' },
   { id: 'voice', label: 'Voice Profile', shortLabel: 'Voice' },
   { id: 'browser', label: 'Browser', shortLabel: 'Web' },
   { id: 'microsoft', label: 'Microsoft', shortLabel: 'MS' },

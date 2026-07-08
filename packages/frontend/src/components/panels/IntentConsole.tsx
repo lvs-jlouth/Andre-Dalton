@@ -6,6 +6,7 @@ import { useAssistantStore } from '../../store/assistantStore.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
 import { useSpeechProfileStore } from '../../store/speechProfileStore.js';
 import { useBrowserStore } from '../../store/browserStore.js';
+import { useProcessingStore } from '../../store/processingStore.js';
 import { useVoiceInput } from '../../hooks/useVoiceInput.js';
 import { useAssistant } from '../../hooks/useAssistant.js';
 import { useTTS } from '../../hooks/useTTS.js';
@@ -89,6 +90,29 @@ export function IntentConsole() {
     }
     if (normalized === 'finite' || normalized === 'finitay' || normalized === 'fih-nee-tay') {
       useSettingsStore.getState().setBootMode(false);
+      inputRef.current?.focus();
+      return;
+    }
+
+    // Research/Analysis mode triggers
+    const researchMatch = text.match(/^(?:research|look into|investigate)\s+(.+)/i);
+    if (researchMatch) {
+      const topic = researchMatch[1].trim();
+      useProcessingStore.getState().startResearch(topic, 'standard');
+      useSettingsStore.getState().setBootMode(true);
+      useSettingsStore.getState().setActivePanel('processing');
+      await speak(`Starting research on "${topic}". I'll work within a token budget to keep costs low.`);
+      inputRef.current?.focus();
+      return;
+    }
+
+    const analysisMatch = text.match(/^(?:analyze|analyse|break down|examine)\s+(.+)/i);
+    if (analysisMatch) {
+      const question = analysisMatch[1].trim();
+      useProcessingStore.getState().startAnalysis('summarize', question, 'standard');
+      useSettingsStore.getState().setBootMode(true);
+      useSettingsStore.getState().setActivePanel('processing');
+      await speak(`Starting analysis of "${question}". Using token-efficient processing.`);
       inputRef.current?.focus();
       return;
     }
