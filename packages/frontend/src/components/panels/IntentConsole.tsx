@@ -5,10 +5,12 @@ import { WaveformDisplay } from '../core/WaveformDisplay.js';
 import { useAssistantStore } from '../../store/assistantStore.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
 import { useSpeechProfileStore } from '../../store/speechProfileStore.js';
+import { useBrowserStore } from '../../store/browserStore.js';
 import { useVoiceInput } from '../../hooks/useVoiceInput.js';
 import { useAssistant } from '../../hooks/useAssistant.js';
 import { useTTS } from '../../hooks/useTTS.js';
 import { useWakeWord } from '../../hooks/useWakeWord.js';
+import { parseVoiceBrowserCommand, executeBrowserCommand } from '../../services/browser/voiceCommandParser.js';
 
 /**
  * IntentConsole — the primary input panel.
@@ -89,6 +91,19 @@ export function IntentConsole() {
       useSettingsStore.getState().setBootMode(false);
       inputRef.current?.focus();
       return;
+    }
+
+    // Browser voice commands — intercept if voice browsing is enabled
+    if (useBrowserStore.getState().voiceBrowsingEnabled) {
+      const browserCmd = parseVoiceBrowserCommand(text);
+      if (browserCmd) {
+        const response = executeBrowserCommand(browserCmd);
+        if (useBrowserStore.getState().announceActions) {
+          await speak(response);
+        }
+        inputRef.current?.focus();
+        return;
+      }
     }
 
     const reply = await sendUserMessage(text);

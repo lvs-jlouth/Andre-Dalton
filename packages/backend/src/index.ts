@@ -15,6 +15,7 @@ import { settingsRoutes } from './routes/settings.js';
 import { authRoutes } from './routes/auth.js';
 import { oneDriveRoutes } from './routes/storage.js';
 import { office365Routes } from './routes/office365.js';
+import searchRoutes from './routes/search.js';
 
 const env = getEnv();
 const log = createLogger('server');
@@ -51,6 +52,7 @@ async function start(): Promise<void> {
   await app.register(settingsRoutes, { prefix: '/settings' });
   await app.register(oneDriveRoutes, { prefix: '/storage' });
   await app.register(office365Routes, { prefix: '/office' });
+  await app.register(searchRoutes, { prefix: '/search' });
 
   try {
     await app.listen({ port: env.PORT, host: env.HOST });

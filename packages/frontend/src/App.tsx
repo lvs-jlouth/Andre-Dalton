@@ -10,6 +10,7 @@ import { AccessibilitySettingsPanel } from './components/settings/AccessibilityS
 import { PrivacySettingsPanel } from './components/settings/PrivacySettings.js';
 import { PersonalitySettingsPanel } from './components/settings/PersonalitySettings.js';
 import { MicrosoftIntegration } from './components/microsoft/MicrosoftIntegration.js';
+import { BrowserSettingsPanel } from './components/settings/BrowserSettings.js';
 import { useSettingsStore } from './store/settingsStore.js';
 import './index.css';
 
@@ -44,6 +45,7 @@ export default function App() {
             {activePanel === 'accessibility' && <AccessibilityView />}
             {activePanel === 'privacy' && <PrivacyView />}
             {activePanel === 'microsoft' && <MicrosoftView />}
+            {activePanel === 'browser' && <BrowserView />}
           </>
         ) : (
           <DashboardView />
@@ -117,6 +119,14 @@ function PersonalityView() {
   return (
     <div className="max-w-2xl mx-auto">
       <PersonalitySettingsPanel />
+    </div>
+  );
+}
+
+function BrowserView() {
+  return (
+    <div className="max-w-2xl mx-auto">
+      <BrowserSettingsPanel />
     </div>
   );
 }
