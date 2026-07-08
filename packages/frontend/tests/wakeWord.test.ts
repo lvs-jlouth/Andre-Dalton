@@ -105,7 +105,7 @@ describe('WakeWord fuzzy matching — custom phrases', () => {
   });
 
   it('matches custom phrase "Hey J.A.R.G.I.I.N."', () => {
-    expect(matchesPhrase('hey jargiin activate', 'Hey J.A.R.G.I.I.N.')).toBe(true);
+    expect(matchesPhrase('hey j.a.r.g.i.i.n. activate', 'Hey J.A.R.G.I.I.N.')).toBe(true);
   });
 
   it('matches two-character minimum phrase', () => {
