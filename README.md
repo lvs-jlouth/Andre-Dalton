@@ -1,4 +1,4 @@
-# AURORA — Adaptive Universal Response & Operations Reasoning Assistant
+# J.A.R.G.I.I.N.
 
 > An original, privacy-first, voice-forward AI assistant with a cinematic HUD interface. Designed with deep accessibility support for users with non-standard speech (including dysarthric patterns), mobility constraints, and diverse interaction needs.
 
@@ -115,16 +115,16 @@ npm test --workspace=packages/frontend  # 38 tests
 1. Provision resources (example names):
 
    ```bash
-   az group create -n rg-aurora -l eastus
-   az appservice plan create -g rg-aurora -n plan-aurora --is-linux --sku B1
-   az webapp create -g rg-aurora -p plan-aurora -n aurora-api-prod --runtime "NODE|20-lts"
+   az group create -n rg-jargiiin -l eastus
+   az appservice plan create -g rg-jargiiin -n plan-jargiiin --is-linux --sku B1
+   az webapp create -g rg-jargiiin -p plan-jargiiin -n jargiiin-api-prod --runtime "NODE|20-lts"
    ```
 
 2. Configure backend startup and app settings:
 
    ```powershell
-   az webapp config set -g rg-aurora -n aurora-api-prod --startup-file "npm run start --workspace=packages/backend"
-   az webapp config appsettings set -g rg-aurora -n aurora-api-prod --settings `
+   az webapp config set -g rg-jargiiin -n jargiiin-api-prod --startup-file "npm run start --workspace=packages/backend"
+   az webapp config appsettings set -g rg-jargiiin -n jargiiin-api-prod --settings `
      PORT=8080 HOST=0.0.0.0 NODE_ENV=production DEBUG_MODE=false PERSIST_TRANSCRIPTS=false `
      OPENAI_API_KEY="<value>" ANTHROPIC_API_KEY="<value>" GOOGLE_GEMINI_API_KEY="<value>" `
      AZURE_OPENAI_API_KEY="<value>" AZURE_OPENAI_ENDPOINT="<value>" AZURE_OPENAI_DEPLOYMENT="<value>" `
@@ -134,10 +134,10 @@ npm test --workspace=packages/frontend  # 38 tests
 3. Deploy code to App Service from the repo root:
 
    ```bash
-   az webapp up -g rg-aurora -n aurora-api-prod --runtime "NODE|20-lts"
+   az webapp up -g rg-jargiiin -n jargiiin-api-prod --runtime "NODE|20-lts"
    ```
 
-4. Deploy frontend to Azure Static Web Apps and set the frontend API base URL to `https://aurora-api-prod.azurewebsites.net`.
+4. Deploy frontend to Azure Static Web Apps and set the frontend API base URL to `https://jargiiin-api-prod.azurewebsites.net`.
 5. Update backend `CORS_ORIGIN` to your Static Web App URL and confirm `/health`, UI load, message flow, STT, and TTS.
 
 ---
@@ -196,7 +196,7 @@ Andre-Dalton/
 
 ## LLM Provider Support
 
-AURORA uses a provider abstraction layer. Configure each via environment variables:
+J.A.R.G.I.I.N. uses a provider abstraction layer. Configure each via environment variables:
 
 | Provider | Key variable |
 |----------|-------------|
@@ -212,7 +212,7 @@ AURORA uses a provider abstraction layer. Configure each via environment variabl
 
 ## Wake Word Feature
 
-AURORA supports an optional configurable wake phrase (default: **"Hey J"**). This is **opt-in** and never active by default.
+J.A.R.G.I.I.N. supports an optional configurable wake phrase (default: **"Hey J"**). This is **opt-in** and never active by default.
 
 - Enable it in the **Voice Adaptation** panel → Wake Word section
 - Change the phrase to anything you like (minimum 2 characters)
@@ -225,7 +225,7 @@ AURORA supports an optional configurable wake phrase (default: **"Hey J"**). Thi
 
 ## Accessibility Design
 
-AURORA is built accessibility-first:
+J.A.R.G.I.I.N. is built accessibility-first:
 
 - **WCAG-aware colour contrast** — cyan/white on dark background, tested against AA minimums
 - **Reduced-motion mode** — disables pulsing animations and transitions
@@ -264,7 +264,7 @@ Disfluencies are treated as **normal variation**, not errors.
 
 ## Privacy & Security
 
-### What AURORA never does
+### What J.A.R.G.I.I.N. never does
 - Never hard-codes API keys anywhere in source code
 - Never logs prompts, transcripts, API keys, or personal data unless `DEBUG_MODE=true`
 - Never exposes provider API keys to the browser/frontend
@@ -329,11 +329,11 @@ Implement the `STTAdapter` interface in `packages/frontend/src/services/stt/` an
 
 ## Naming & Originality
 
-AURORA is an **original project**. All names, visual concepts, and interaction patterns are independently created:
+J.A.R.G.I.I.N. is an **original project**. All names, visual concepts, and interaction patterns are independently created:
 
 | Element | Name |
 |---------|------|
-| Assistant | AURORA |
+| Assistant | J.A.R.G.I.I.N. |
 | Status core | Cognitive Core |
 | Activity feed | Systems Stream |
 | Input area | Intent Console |
