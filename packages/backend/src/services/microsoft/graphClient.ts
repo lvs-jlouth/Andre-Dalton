@@ -7,6 +7,29 @@ import { createLogger } from '../../utils/logger.js';
 const log = createLogger('graph-client');
 const GRAPH_BASE_URL = 'https://graph.microsoft.com/v1.0';
 
+/** Allowed hostnames for Graph API requests (prevents SSRF) */
+const ALLOWED_HOSTS = new Set([
+  'graph.microsoft.com',
+  'graph.microsoft-ppe.com',
+]);
+
+/**
+ * Validate that a URL targets only allowed Microsoft Graph endpoints.
+ * Throws if the URL would route to an untrusted host.
+ */
+function validateGraphUrl(url: string): void {
+  const parsed = new URL(url);
+  if (!ALLOWED_HOSTS.has(parsed.hostname)) {
+    throw new Error(
+      `SSRF protection: requests to "${parsed.hostname}" are not allowed. ` +
+      `Only Microsoft Graph API hosts are permitted.`,
+    );
+  }
+  if (parsed.protocol !== 'https:') {
+    throw new Error('SSRF protection: only HTTPS is allowed for Graph API requests.');
+  }
+}
+
 export interface GraphRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
@@ -19,6 +42,7 @@ export class GraphClient {
 
   async request<T = unknown>(endpoint: string, options: GraphRequestOptions = {}): Promise<T> {
     const url = endpoint.startsWith('http') ? endpoint : `${GRAPH_BASE_URL}${endpoint}`;
+    validateGraphUrl(url);
     const { method = 'GET', headers = {}, body, responseType = 'json' } = options;
 
     const response = await fetch(url, {
@@ -49,6 +73,7 @@ export class GraphClient {
    */
   async uploadContent(endpoint: string, content: Buffer | ArrayBuffer, contentType: string): Promise<unknown> {
     const url = endpoint.startsWith('http') ? endpoint : `${GRAPH_BASE_URL}${endpoint}`;
+    validateGraphUrl(url);
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -73,6 +98,7 @@ export class GraphClient {
    */
   async downloadContent(endpoint: string): Promise<ArrayBuffer> {
     const url = endpoint.startsWith('http') ? endpoint : `${GRAPH_BASE_URL}${endpoint}`;
+    validateGraphUrl(url);
 
     const response = await fetch(url, {
       method: 'GET',
