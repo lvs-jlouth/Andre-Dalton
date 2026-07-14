@@ -1,5 +1,7 @@
 export type PaceSetting = 'very_slow' | 'slow' | 'normal' | 'fast';
 export type ClarificationMode = 'relaxed' | 'moderate' | 'aggressive';
+export type VoiceEngine = 'browser' | 'piper' | 'coqui-xtts' | 'styletts2' | 'kokoro';
+export type PersonalityStyle = 'balanced' | 'british-butler' | 'time-traveler';
 
 export interface SpeechSubstitution {
   heard: string;
@@ -31,6 +33,15 @@ export interface SpeechProfile {
   confirmationThreshold: number;
   consentStoringCorrections: boolean;
   consentLocalLearning: boolean;
+  voiceEngine: VoiceEngine;
+  voiceModel: string;
+  voiceEndpoint?: string;
+  voiceId?: string;
+  voiceRate: number;
+  voicePitch: number;
+  voiceVolume: number;
+  personalityStyle: PersonalityStyle;
+  personalityPrompt: string;
   /** Wake word / wake phrase configuration */
   wakeWord: WakeWordConfig;
   updatedAt: string;

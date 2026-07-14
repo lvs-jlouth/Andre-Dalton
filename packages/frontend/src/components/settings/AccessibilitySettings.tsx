@@ -1,4 +1,5 @@
 import { Panel } from '../ui/Panel.js';
+import { AccordionSection } from '../ui/AccordionSection.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
 import type { AccessibilitySettings } from '../../types/settings.js';
 
@@ -49,7 +50,7 @@ function Toggle({ id, label, checked, onChange, description }: ToggleProps) {
 
 /**
  * AccessibilitySettings panel.
- * All preferences are stored locally in the browser via Zustand/localStorage.
+ * Accessibility preferences panel.
  */
 export function AccessibilitySettingsPanel() {
   const settings = useSettingsStore((s) => s.accessibility);
@@ -61,87 +62,104 @@ export function AccessibilitySettingsPanel() {
 
   return (
     <Panel title="Accessibility Settings" aria-label="Accessibility preferences">
-      <div className="space-y-1">
-        <Toggle
-          id="reduced-motion"
-          label="Reduced motion"
-          checked={settings.reducedMotion}
-          onChange={(v) => patch({ reducedMotion: v })}
-          description="Disables animations and transitions"
-        />
-        <Toggle
-          id="high-contrast"
-          label="High contrast"
-          checked={settings.highContrast}
-          onChange={(v) => patch({ highContrast: v })}
-          description="Increases text and border contrast"
-        />
-        <Toggle
-          id="large-text"
-          label="Large text"
-          checked={settings.largeText}
-          onChange={(v) => patch({ largeText: v, fontScale: v ? 1.4 : 1.0 })}
-          description="Increases base font size"
-        />
-        <Toggle
-          id="captions"
-          label="Always-on captions"
-          checked={settings.captions}
-          onChange={(v) => patch({ captions: v })}
-          description="Shows spoken responses as text"
-        />
-        <Toggle
-          id="large-targets"
-          label="Large touch targets"
-          checked={settings.largeHitTargets}
-          onChange={(v) => patch({ largeHitTargets: v })}
-          description="Uses xl button sizes for easier tapping"
-        />
+      <div className="space-y-3">
+        <AccordionSection
+          id="accessibility-visual"
+          title="Visual readability"
+          subtitle="Motion, contrast, and text scale"
+          defaultOpen
+        >
+          <div className="space-y-1">
+            <Toggle
+              id="reduced-motion"
+              label="Reduced motion"
+              checked={settings.reducedMotion}
+              onChange={(v) => patch({ reducedMotion: v })}
+              description="Disables animations and transitions"
+            />
+            <Toggle
+              id="high-contrast"
+              label="High contrast"
+              checked={settings.highContrast}
+              onChange={(v) => patch({ highContrast: v })}
+              description="Increases text and border contrast"
+            />
+            <Toggle
+              id="large-text"
+              label="Large text"
+              checked={settings.largeText}
+              onChange={(v) => patch({ largeText: v, fontScale: v ? 1.4 : 1.0 })}
+              description="Increases base font size"
+            />
 
-        {/* Font scale slider */}
-        <div className="py-2">
-          <label htmlFor="font-scale" className="block text-sm font-mono text-aurora-white mb-1">
-            Font scale: {settings.fontScale.toFixed(1)}×
-          </label>
-          <input
-            id="font-scale"
-            type="range"
-            min={0.8}
-            max={2.5}
-            step={0.1}
-            value={settings.fontScale}
-            onChange={(e) => patch({ fontScale: Number(e.target.value) })}
-            className="w-full accent-aurora-cyan"
-            aria-valuemin={0.8}
-            aria-valuemax={2.5}
-            aria-valuenow={settings.fontScale}
-            aria-valuetext={`${settings.fontScale.toFixed(1)} times`}
-          />
-        </div>
-
-        {/* One-handed layout */}
-        <div className="py-2">
-          <fieldset>
-            <legend className="text-sm font-mono text-aurora-white mb-1">
-              One-handed layout
-            </legend>
-            <div className="flex gap-3">
-              {(['none', 'left', 'right'] as const).map((val) => (
-                <label key={val} className="flex items-center gap-1 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="one-handed"
-                    value={val}
-                    checked={settings.onHandedLayout === val}
-                    onChange={() => patch({ onHandedLayout: val })}
-                    className="accent-aurora-cyan"
-                  />
-                  <span className="text-sm font-mono text-aurora-white capitalize">{val}</span>
-                </label>
-              ))}
+            <div className="py-2">
+              <label htmlFor="font-scale" className="block text-sm font-mono text-aurora-white mb-1">
+                Font scale: {settings.fontScale.toFixed(1)}×
+              </label>
+              <input
+                id="font-scale"
+                type="range"
+                min={0.8}
+                max={2.5}
+                step={0.1}
+                value={settings.fontScale}
+                onChange={(e) => patch({ fontScale: Number(e.target.value) })}
+                className="w-full accent-aurora-cyan"
+                aria-valuemin={0.8}
+                aria-valuemax={2.5}
+                aria-valuenow={settings.fontScale}
+                aria-valuetext={`${settings.fontScale.toFixed(1)} times`}
+              />
             </div>
-          </fieldset>
-        </div>
+          </div>
+        </AccordionSection>
+
+        <AccordionSection
+          id="accessibility-interaction"
+          title="Interaction aids"
+          subtitle="Captions, touch targets, and one-handed layout"
+          defaultOpen
+        >
+          <div className="space-y-1">
+            <Toggle
+              id="captions"
+              label="Always-on captions"
+              checked={settings.captions}
+              onChange={(v) => patch({ captions: v })}
+              description="Shows spoken responses as text"
+            />
+            <Toggle
+              id="large-targets"
+              label="Large touch targets"
+              checked={settings.largeHitTargets}
+              onChange={(v) => patch({ largeHitTargets: v })}
+              description="Uses xl button sizes for easier tapping"
+            />
+
+            <div className="py-2">
+              <fieldset>
+                <legend className="text-sm font-mono text-aurora-white mb-1">
+                  One-handed layout
+                </legend>
+                <div className="flex gap-3">
+                  {(['none', 'left', 'right'] as const).map((val) => (
+                    <label key={val} className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="one-handed"
+                        value={val}
+                        checked={settings.onHandedLayout === val}
+                        onChange={() => patch({ onHandedLayout: val })}
+                        className="accent-aurora-cyan"
+                      />
+                      <span className="text-sm font-mono text-aurora-white capitalize">{val}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </AccordionSection>
       </div>
     </Panel>
   );

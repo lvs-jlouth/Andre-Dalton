@@ -23,7 +23,7 @@ const sizeClasses = {
 };
 
 /**
- * AURORA button — meets WCAG 2.1 minimum 44x44px touch target.
+ * J.A.R.G.I.I.N. button — meets WCAG 2.1 minimum 44x44px touch target.
  * Always has a visible focus ring for keyboard navigation.
  */
 export function Button({

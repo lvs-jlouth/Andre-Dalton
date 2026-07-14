@@ -4,9 +4,20 @@ import { useSpeechProfileStore } from '../src/store/speechProfileStore.js';
 
 describe('assistantStore', () => {
   beforeEach(() => {
+    const now = Date.now();
+    const seedConversation = {
+      id: 'conversation-1',
+      title: 'Conversation 1',
+      createdAt: now,
+      updatedAt: now,
+      turns: [],
+    };
     useAssistantStore.setState({
       status: 'idle',
       conversation: [],
+      conversations: [seedConversation],
+      activeConversationId: seedConversation.id,
+      preferredModel: 'gpt-5-mini',
       lastResponse: null,
       currentCaption: '',
       errorMessage: null,
@@ -23,10 +34,10 @@ describe('assistantStore', () => {
   });
 
   it('addTurn appends to conversation', () => {
-    useAssistantStore.getState().addTurn({ role: 'user', content: 'Hello AURORA' });
+    useAssistantStore.getState().addTurn({ role: 'user', content: 'Hello J.A.R.G.I.I.N.' });
     const conv = useAssistantStore.getState().conversation;
     expect(conv.length).toBe(1);
-    expect(conv[0].content).toBe('Hello AURORA');
+    expect(conv[0].content).toBe('Hello J.A.R.G.I.I.N.');
     expect(conv[0].role).toBe('user');
     expect(typeof conv[0].id).toBe('string');
     expect(typeof conv[0].timestamp).toBe('number');
@@ -43,9 +54,25 @@ describe('assistantStore', () => {
     expect(state.currentCaption).toBe('');
   });
 
+  it('creates and renames conversations', () => {
+    const store = useAssistantStore.getState();
+    store.createConversation('Release Notes');
+    const created = useAssistantStore.getState().conversations[0];
+    expect(created.title).toBe('Release Notes');
+
+    useAssistantStore.getState().renameConversation(created.id, 'Weekly Review');
+    const renamed = useAssistantStore.getState().conversations.find((c) => c.id === created.id);
+    expect(renamed?.title).toBe('Weekly Review');
+  });
+
   it('setCaption updates caption', () => {
     useAssistantStore.getState().setCaption('Hello there');
     expect(useAssistantStore.getState().currentCaption).toBe('Hello there');
+  });
+
+  it('updates preferred model path', () => {
+    useAssistantStore.getState().setPreferredModel('gpt-5.5');
+    expect(useAssistantStore.getState().preferredModel).toBe('gpt-5.5');
   });
 });
 
@@ -64,6 +91,15 @@ describe('speechProfileStore', () => {
         confirmationThreshold: 0.6,
         consentStoringCorrections: false,
         consentLocalLearning: false,
+        voiceEngine: 'browser',
+        voiceModel: 'Browser default voice',
+        voiceEndpoint: '',
+        voiceId: '',
+        voiceRate: 0.9,
+        voicePitch: 1.0,
+        voiceVolume: 1.0,
+        personalityStyle: 'balanced',
+        personalityPrompt: 'Speak clearly, calmly, and helpfully with concise responses.',
         wakeWord: {
           enabled: false,
           phrase: 'Hey J',
@@ -96,14 +132,14 @@ describe('speechProfileStore', () => {
   });
 
   it('addVocabularyWord deduplicates', () => {
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
     expect(useSpeechProfileStore.getState().profile.customVocabulary).toHaveLength(1);
   });
 
   it('removeVocabularyWord removes word', () => {
-    useSpeechProfileStore.getState().addVocabularyWord('AURORA');
-    useSpeechProfileStore.getState().removeVocabularyWord('AURORA');
+    useSpeechProfileStore.getState().addVocabularyWord('J.A.R.G.I.I.N.');
+    useSpeechProfileStore.getState().removeVocabularyWord('J.A.R.G.I.I.N.');
     expect(useSpeechProfileStore.getState().profile.customVocabulary).toHaveLength(0);
   });
 

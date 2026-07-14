@@ -12,14 +12,14 @@ interface StreamEntry {
 let entryId = 0;
 
 /**
- * SystemsStream — a terminal-style feed of AURORA's operational log.
+ * SystemsStream — a terminal-style feed of J.A.R.G.I.I.N.'s operational log.
  * Privacy note: never shows message content, only operational metadata.
  */
 export function SystemsStream() {
   const status = useAssistantStore((s) => s.status);
   const errorMessage = useAssistantStore((s) => s.errorMessage);
   const [entries, setEntries] = useState<StreamEntry[]>([
-    { id: ++entryId, time: now(), text: 'AURORA systems initialised', type: 'info' },
+    { id: ++entryId, time: now(), text: 'J.A.R.G.I.I.N. systems initialised', type: 'info' },
     { id: ++entryId, time: now(), text: 'Voice subsystem ready', type: 'info' },
     { id: ++entryId, time: now(), text: 'Provider router standby', type: 'info' },
   ]);
@@ -54,7 +54,7 @@ export function SystemsStream() {
   return (
     <Panel
       title="Systems Stream"
-      aria-label="AURORA systems activity log"
+      aria-label="J.A.R.G.I.I.N. systems activity log"
       aria-live="polite"
       aria-relevant="additions"
     >

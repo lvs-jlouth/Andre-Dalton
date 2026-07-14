@@ -7,7 +7,6 @@ import { useSettingsStore } from '../../store/settingsStore.js';
 import { useSpeechProfileStore } from '../../store/speechProfileStore.js';
 import { useVoiceInput } from '../../hooks/useVoiceInput.js';
 import { useAssistant } from '../../hooks/useAssistant.js';
-import { useTTS } from '../../hooks/useTTS.js';
 import { useWakeWord } from '../../hooks/useWakeWord.js';
 
 /**
@@ -23,17 +22,13 @@ export function IntentConsole() {
   const largeHitTargets = useSettingsStore((s) => s.accessibility.largeHitTargets);
   const wakeWordConfig = useSpeechProfileStore((s) => s.profile.wakeWord);
   const { sendUserMessage } = useAssistant();
-  const { speak } = useTTS();
 
   const { sttStatus, partialTranscript, startListening, stopListening } = useVoiceInput({
     onResult: async (result) => {
       if (result.transcript.trim()) {
-        const reply = await sendUserMessage(result.transcript);
-        if (reply) {
-          await speak(reply);
-          // Resume wake word monitoring after a completed exchange
-          resumeMonitoring();
-        }
+        await sendUserMessage(result.transcript);
+        // Resume wake word monitoring after a completed exchange
+        resumeMonitoring();
       }
     },
   });
@@ -65,11 +60,8 @@ export function IntentConsole() {
     const text = inputText.trim();
     if (!text || isBusy) return;
     setInputText('');
-    const reply = await sendUserMessage(text);
-    if (reply) {
-      await speak(reply);
-      resumeMonitoring();
-    }
+    await sendUserMessage(text);
+    resumeMonitoring();
     inputRef.current?.focus();
   }
 
@@ -164,7 +156,7 @@ export function IntentConsole() {
         {/* Text input row */}
         <div className="flex gap-2 items-center">
           <label htmlFor="aurora-input" className="sr-only">
-            Message to AURORA
+            Message to J.A.R.G.I.I.N.
           </label>
           <input
             id="aurora-input"
@@ -214,6 +206,7 @@ export function IntentConsole() {
             {isThinking ? '⏳' : '→'}
           </Button>
         </div>
+
       </div>
     </Panel>
   );

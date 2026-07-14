@@ -35,8 +35,13 @@ export function getProvider(id: string): LlmProvider | undefined {
 export function getDefaultProvider(): LlmProvider {
   const defaultId = getEnv().DEFAULT_PROVIDER;
   const provider = getProvider(defaultId);
-  if (!provider) {
-    throw new Error(`Default provider "${defaultId}" not found. Check DEFAULT_PROVIDER in .env`);
+  if (!provider || !isProviderConfigured(defaultId, getEnv())) {
+    // Prefer Foundry/Azure first, then direct OpenAI when defaults are unavailable.
+    const fallback = ['azure', 'openai']
+      .map((id) => getProvider(id))
+      .find((p) => p && isProviderConfigured(p.id, getEnv()));
+    if (fallback) return fallback;
+    throw new Error(`Default provider "${defaultId}" is unavailable or unconfigured. Check DEFAULT_PROVIDER and API settings.`);
   }
   return provider;
 }
@@ -57,4 +62,8 @@ function isProviderConfigured(id: string, env: ReturnType<typeof getEnv>): boole
   const key = getProviderApiKey(id);
   if (id === 'azure') return !!(key && env.AZURE_OPENAI_ENDPOINT);
   return !!key;
+}
+
+export function isProviderAvailable(id: string): boolean {
+  return isProviderConfigured(id, getEnv());
 }

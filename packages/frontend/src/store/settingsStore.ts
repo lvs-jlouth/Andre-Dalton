@@ -6,10 +6,11 @@ import { DEFAULT_ACCESSIBILITY, DEFAULT_PRIVACY } from '../types/settings.js';
 interface SettingsState {
   accessibility: AccessibilitySettings;
   privacy: PrivacySettings;
-  activePanel: 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy';
+  activePanel: 'dashboard' | 'settings' | 'providers' | 'voice' | 'accessibility' | 'privacy';
 
   updateAccessibility: (patch: Partial<AccessibilitySettings>) => void;
   updatePrivacy: (patch: Partial<PrivacySettings>) => void;
+  setAllSettings: (settings: { accessibility: AccessibilitySettings; privacy: PrivacySettings }) => void;
   setActivePanel: (panel: SettingsState['activePanel']) => void;
 }
 
@@ -25,6 +26,12 @@ export const useSettingsStore = create<SettingsState>()(
 
       updatePrivacy: (patch) =>
         set((state) => ({ privacy: { ...state.privacy, ...patch } })),
+
+      setAllSettings: (settings) =>
+        set({
+          accessibility: { ...DEFAULT_ACCESSIBILITY, ...settings.accessibility },
+          privacy: { ...DEFAULT_PRIVACY, ...settings.privacy },
+        }),
 
       setActivePanel: (panel) => set({ activePanel: panel }),
     }),

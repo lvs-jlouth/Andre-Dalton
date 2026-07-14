@@ -34,6 +34,8 @@ export interface AssistantRequest {
   systemPrompt?: string;
   maxTokens?: number;
   temperature?: number;
+  useWebSearch?: boolean;
+  includeM365Context?: boolean;
 }
 
 export interface AssistantResponse {
@@ -46,4 +48,5 @@ export interface AssistantResponse {
     totalTokens: number;
   };
   providerId: string;
+  m365ContextUsed?: boolean;
 }

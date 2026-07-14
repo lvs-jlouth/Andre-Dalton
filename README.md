@@ -1,6 +1,8 @@
-# AURORA — Adaptive Universal Response & Operations Reasoning Assistant
+# J.A.R.G.I.I.N.
 
 > An original, privacy-first, voice-forward AI assistant with a cinematic HUD interface. Designed with deep accessibility support for users with non-standard speech (including dysarthric patterns), mobility constraints, and diverse interaction needs.
+
+> **Repository note:** the current GitHub repository slug and local clone path still use `Andre-Dalton`, so clone commands and example paths below keep that name.
 
 ---
 
@@ -53,7 +55,16 @@ npm test --workspace=packages/backend   # 55 tests
 npm test --workspace=packages/frontend  # 38 tests
 ```
 
-### 5. Install Methods of Procedure (MOP)
+### 5. Current validation status
+
+| Step | Command | Outcome |
+|------|---------|---------|
+| Install dependencies | `npm install` | Pass |
+| Type checks (`lint`) | `npm run lint` | Backend pass; frontend currently fails with TS6310 project-reference config issue |
+| Build | `npm run build` | Backend pass; frontend currently fails with TS6310 project-reference config issue |
+| Tests | `npm test` | Pass (backend + frontend suites) |
+
+### 6. Install Methods of Procedure (MOP)
 
 #### #1 — Homelab (Windows desktop, full capabilities)
 
@@ -69,8 +80,8 @@ npm test --workspace=packages/frontend  # 38 tests
 
 3. Edit `packages\backend\.env`:
    - Set at least one LLM provider key (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_GEMINI_API_KEY`, `AZURE_OPENAI_*`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`, or local `LOCAL_LLM_BASE_URL`).
-   - Set `STT_PROVIDER=browser` (or `deepgram` + `DEEPGRAM_API_KEY`).
-   - Set `TTS_PROVIDER=browser` (or `elevenlabs` + `ELEVENLABS_API_KEY`).
+   - Set `STT_PROVIDER=browser` (or `openai-stt` with `OPENAI_API_KEY`; model from `OPENAI_STT_MODEL`).
+   - Set `TTS_PROVIDER=browser` (or `azure-speech` with `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION`, or `openai-tts` with `OPENAI_API_KEY`; model from `OPENAI_TTS_MODEL`).
    - Keep `DEBUG_MODE=false` unless active troubleshooting is required.
 4. Start services in two terminals:
 
@@ -145,7 +156,7 @@ npm test --workspace=packages/frontend  # 38 tests
 ## Project Structure
 
 ```
-Andre-Dalton/
+Andre-Dalton/                      # Current repository folder name
 ├── .env.example                   # Required environment variables template
 ├── package.json                   # npm workspaces root
 ├── packages/
@@ -191,12 +202,16 @@ Andre-Dalton/
 | `PUT` | `/profile/speech` | Save speech/interaction profile |
 | `GET` | `/settings/accessibility` | Load accessibility settings |
 | `PUT` | `/settings/accessibility` | Save accessibility settings |
+| `GET` | `/settings/user-config` | Load full per-user settings document |
+| `PUT` | `/settings/user-config` | Save full per-user settings document |
+
+Speech routes are isolated from chat model routing (`DEFAULT_PROVIDER` and GPT model selection). STT/TTS always use dedicated speech provider settings (`STT_PROVIDER`, `TTS_PROVIDER`) and dedicated speech models when configured.
 
 ---
 
 ## LLM Provider Support
 
-AURORA uses a provider abstraction layer. Configure each via environment variables:
+J.A.R.G.I.I.N. uses a provider abstraction layer. Configure each via environment variables:
 
 | Provider | Key variable |
 |----------|-------------|
@@ -212,7 +227,7 @@ AURORA uses a provider abstraction layer. Configure each via environment variabl
 
 ## Wake Word Feature
 
-AURORA supports an optional configurable wake phrase (default: **"Hey J"**). This is **opt-in** and never active by default.
+J.A.R.G.I.I.N. supports an optional configurable wake phrase (default: **"Hey J"**). This is **opt-in** and never active by default.
 
 - Enable it in the **Voice Adaptation** panel → Wake Word section
 - Change the phrase to anything you like (minimum 2 characters)
@@ -225,7 +240,7 @@ AURORA supports an optional configurable wake phrase (default: **"Hey J"**). Thi
 
 ## Accessibility Design
 
-AURORA is built accessibility-first:
+J.A.R.G.I.I.N. is built accessibility-first:
 
 - **WCAG-aware colour contrast** — cyan/white on dark background, tested against AA minimums
 - **Reduced-motion mode** — disables pulsing animations and transitions
@@ -264,7 +279,7 @@ Disfluencies are treated as **normal variation**, not errors.
 
 ## Privacy & Security
 
-### What AURORA never does
+### What J.A.R.G.I.I.N. never does
 - Never hard-codes API keys anywhere in source code
 - Never logs prompts, transcripts, API keys, or personal data unless `DEBUG_MODE=true`
 - Never exposes provider API keys to the browser/frontend
@@ -308,6 +323,11 @@ DEBUG_MODE=false           # Set true to enable verbose logging (NEVER in produc
 PERSIST_TRANSCRIPTS=false  # Set true to allow local transcript storage
 PORT=3001
 CORS_ORIGIN=http://localhost:5173
+GRAPH_TENANT_ID=...
+GRAPH_CLIENT_ID=...
+GRAPH_CLIENT_SECRET=...
+SHAREPOINT_SITE_ID=...
+SHAREPOINT_SETTINGS_FOLDER=JargiinSettings
 ```
 
 ### TypeScript
@@ -329,11 +349,11 @@ Implement the `STTAdapter` interface in `packages/frontend/src/services/stt/` an
 
 ## Naming & Originality
 
-AURORA is an **original project**. All names, visual concepts, and interaction patterns are independently created:
+J.A.R.G.I.I.N. is an **original project**. All names, visual concepts, and interaction patterns are independently created:
 
 | Element | Name |
 |---------|------|
-| Assistant | AURORA |
+| Assistant | J.A.R.G.I.I.N. |
 | Status core | Cognitive Core |
 | Activity feed | Systems Stream |
 | Input area | Intent Console |

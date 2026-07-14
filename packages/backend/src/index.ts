@@ -12,6 +12,7 @@ import { assistantRoutes } from './routes/assistant.js';
 import { speechRoutes } from './routes/speech.js';
 import { profileRoutes } from './routes/profile.js';
 import { settingsRoutes } from './routes/settings.js';
+import { m365Routes } from './routes/m365.js';
 
 const env = getEnv();
 const log = createLogger('server');
@@ -38,17 +39,23 @@ async function start(): Promise<void> {
     timeWindow: '1 minute',
   });
 
+  const registerRoutes = async (basePrefix = ''): Promise<void> => {
+    await app.register(healthRoutes, { prefix: `${basePrefix}/health` });
+    await app.register(providerRoutes, { prefix: `${basePrefix}/providers` });
+    await app.register(assistantRoutes, { prefix: `${basePrefix}/assistant` });
+    await app.register(speechRoutes, { prefix: `${basePrefix}/speech` });
+    await app.register(profileRoutes, { prefix: `${basePrefix}/profile` });
+    await app.register(settingsRoutes, { prefix: `${basePrefix}/settings` });
+    await app.register(m365Routes, { prefix: `${basePrefix}/m365` });
+  };
+
   // Routes
-  await app.register(healthRoutes, { prefix: '/health' });
-  await app.register(providerRoutes, { prefix: '/providers' });
-  await app.register(assistantRoutes, { prefix: '/assistant' });
-  await app.register(speechRoutes, { prefix: '/speech' });
-  await app.register(profileRoutes, { prefix: '/profile' });
-  await app.register(settingsRoutes, { prefix: '/settings' });
+  await registerRoutes('');
+  await registerRoutes('/api');
 
   try {
     await app.listen({ port: env.PORT, host: env.HOST });
-    log.info(`AURORA backend listening on http://${env.HOST}:${env.PORT}`);
+    log.info(`J.A.R.G.I.I.N. backend listening on http://${env.HOST}:${env.PORT}`);
   } catch (err) {
     log.error('Failed to start server', err);
     process.exit(1);

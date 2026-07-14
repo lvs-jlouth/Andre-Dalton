@@ -42,7 +42,8 @@ export class OpenRouterProvider implements LlmProvider {
   async sendMessage(request: LlmRequest): Promise<LlmResponse> {
     if (!this.apiKey) throw new Error('OpenRouter API key not configured');
     const env = getEnv();
-    const model = request.model ?? 'openai/gpt-4o-mini';
+    // Sonar models are web-connected and optimized for up-to-date factual retrieval.
+    const model = request.model ?? 'perplexity/sonar-pro';
 
     const messages = request.systemPrompt
       ? [{ role: 'system', content: request.systemPrompt }, ...request.messages]

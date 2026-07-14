@@ -1,0 +1,49 @@
+{
+  "routes": [
+    {
+      "route": "/.auth/*",
+      "allowedRoles": ["anonymous"]
+    },
+    {
+      "route": "/*",
+      "allowedRoles": ["authenticated"]
+    }
+  ],
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/56146cca-d903-4f31-b0ec-bde8baa883bb/v2.0",
+          "clientIdSettingName": "SWA_AAD_CLIENT_ID",
+          "clientSecretSettingName": "SWA_AAD_CLIENT_SECRET"
+        },
+        "login": {
+          "loginParameters": [
+            "scope=openid profile email User.Read Calendars.Read Mail.Read Files.Read"
+          ]
+        }
+      }
+    }
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/api/*",
+      "/assets/*",
+      "/*.css",
+      "/*.js",
+      "/*.png",
+      "/*.jpg",
+      "/*.svg",
+      "/*.ico",
+      "/*.map"
+    ]
+  },
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/.auth/login/aad"
+    }
+  }
+}
+

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── AURORA custom base styles ───────────────────────────────────────── */
+/* ── J.A.R.G.I.I.N. custom base styles ───────────────────────────────── */
 @layer base {
   :root {
     color-scheme: dark;
@@ -19,6 +19,42 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+
+  @keyframes cognitive-spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes cognitive-spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes cognitive-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.9; }
+  }
+
+  @keyframes cognitive-core-speak {
+    0%, 100% { box-shadow: 0 0 0 rgba(0, 212, 255, 0.05); }
+    50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.55); }
+  }
+
+  .cognitive-ring-spin-slow {
+    animation: cognitive-spin-slow 6s linear infinite;
+  }
+
+  .cognitive-ring-spin-reverse {
+    animation: cognitive-spin-reverse 4s linear infinite;
+  }
+
+  .cognitive-ring-pulse {
+    animation: cognitive-pulse 0.9s ease-in-out infinite;
+  }
+
+  .cognitive-core-speaking {
+    animation: cognitive-core-speak 0.7s ease-in-out infinite;
   }
 
   /* High-contrast override */
@@ -49,4 +85,24 @@
     outline: 2px solid #00d4ff;
     outline-offset: 2px;
   }
+
+  /* App-level text scaling for visual acuity controls. */
+  .aurora-scale-text {
+    font-size: calc(var(--aurora-base-font-size, 0.875rem) * var(--aurora-font-scale, 1));
+    --text-xs: calc(0.75rem * var(--aurora-font-scale, 1));
+    --text-sm: calc(0.875rem * var(--aurora-font-scale, 1));
+    --text-base: calc(1rem * var(--aurora-font-scale, 1));
+    --text-lg: calc(1.125rem * var(--aurora-font-scale, 1));
+    --text-xl: calc(1.25rem * var(--aurora-font-scale, 1));
+    --text-2xl: calc(1.5rem * var(--aurora-font-scale, 1));
+    --text-3xl: calc(1.875rem * var(--aurora-font-scale, 1));
+  }
+
+  .aurora-scale-text .text-xs { font-size: calc(0.75rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-sm { font-size: calc(0.875rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-base { font-size: calc(1rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-lg { font-size: calc(1.125rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-xl { font-size: calc(1.25rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-2xl { font-size: calc(1.5rem * var(--aurora-font-scale, 1)) !important; }
+  .aurora-scale-text .text-3xl { font-size: calc(1.875rem * var(--aurora-font-scale, 1)) !important; }
 }

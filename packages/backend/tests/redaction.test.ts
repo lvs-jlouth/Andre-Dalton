@@ -58,7 +58,7 @@ describe('redactSensitive', () => {
   });
 
   it('returns plain text unchanged when no sensitive data present', () => {
-    const plain = 'Hello, AURORA is ready.';
+    const plain = 'Hello, J.A.R.G.I.I.N. is ready.';
     expect(redactSensitive(plain)).toBe(plain);
   });
 

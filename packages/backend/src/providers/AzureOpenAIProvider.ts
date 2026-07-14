@@ -19,11 +19,39 @@ export class AzureOpenAIProvider implements LlmProvider {
   }
 
   private get endpoint(): string | undefined {
-    return getEnv().AZURE_OPENAI_ENDPOINT;
+    const endpoint = getEnv().AZURE_OPENAI_ENDPOINT;
+    return endpoint ? endpoint.replace(/\/+$/, '') : undefined;
   }
 
-  private get deployment(): string {
-    return getEnv().AZURE_OPENAI_DEPLOYMENT ?? 'gpt-4o-mini';
+  private resolveDeployment(model?: string): string {
+    const env = getEnv();
+    const modelId = (model ?? '').trim().toLowerCase();
+    if (modelId === 'gpt-5.5') return env.AZURE_OPENAI_DEPLOYMENT_GPT_5_5 ?? 'gpt-5.5';
+    if (modelId === 'gpt-5-mini') return env.AZURE_OPENAI_DEPLOYMENT_GPT_5_MINI ?? env.AZURE_OPENAI_DEPLOYMENT ?? 'jargiin-primary';
+    if (modelId === 'gpt-5-nano') return env.AZURE_OPENAI_DEPLOYMENT_GPT_5_NANO ?? 'gpt-5-nano';
+    return env.AZURE_OPENAI_DEPLOYMENT ?? 'jargiin-primary';
+  }
+
+  private get apiVersion(): string {
+    return getEnv().AZURE_OPENAI_API_VERSION ?? '2025-04-01-preview';
+  }
+
+  private chatUrl(deployment: string): string {
+    return `${this.endpoint}/openai/deployments/${deployment}/chat/completions?api-version=${this.apiVersion}`;
+  }
+
+  private async sendChatWithTokenParam(
+    messages: Array<{ role: string; content: string }>,
+    tokenParam: 'max_completion_tokens' | 'max_tokens',
+    maxTokens: number,
+    deployment: string,
+  ): Promise<Response> {
+    return fetch(this.chatUrl(deployment), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': this.apiKey! },
+      body: JSON.stringify({ messages, [tokenParam]: maxTokens }),
+      signal: AbortSignal.timeout(30000),
+    });
   }
 
   async healthCheck(): Promise<ProviderHealth> {
@@ -32,11 +60,12 @@ export class AzureOpenAIProvider implements LlmProvider {
     }
     const start = Date.now();
     try {
-      const url = `${this.endpoint}/openai/deployments?api-version=2024-02-01`;
-      const res = await fetch(url, {
-        headers: { 'api-key': this.apiKey },
-        signal: AbortSignal.timeout(5000),
-      });
+      const messages = [{ role: 'user', content: 'health check' }];
+      const deployment = this.resolveDeployment('gpt-5-mini');
+      let res = await this.sendChatWithTokenParam(messages, 'max_completion_tokens', 8, deployment);
+      if (!res.ok && res.status === 400) {
+        res = await this.sendChatWithTokenParam(messages, 'max_tokens', 8, deployment);
+      }
       const latencyMs = Date.now() - start;
       if (res.ok) return { status: 'ok', latencyMs };
       return { status: 'degraded', latencyMs, message: `HTTP ${res.status}` };
@@ -50,18 +79,15 @@ export class AzureOpenAIProvider implements LlmProvider {
     if (!this.apiKey || !this.endpoint) throw new Error('Azure OpenAI credentials not configured');
     const env = getEnv();
 
-    const url = `${this.endpoint}/openai/deployments/${this.deployment}/chat/completions?api-version=2024-02-01`;
-
     const messages = request.systemPrompt
       ? [{ role: 'system', content: request.systemPrompt }, ...request.messages]
       : request.messages;
+    const deployment = this.resolveDeployment(request.model);
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': this.apiKey },
-      body: JSON.stringify({ messages, max_tokens: request.maxTokens ?? 1024 }),
-      signal: AbortSignal.timeout(30000),
-    });
+    let res = await this.sendChatWithTokenParam(messages, 'max_completion_tokens', request.maxTokens ?? 1024, deployment);
+    if (!res.ok && res.status === 400) {
+      res = await this.sendChatWithTokenParam(messages, 'max_tokens', request.maxTokens ?? 1024, deployment);
+    }
 
     if (!res.ok) throw new Error(`Azure OpenAI API error: ${res.status}`);
 
@@ -77,7 +103,7 @@ export class AzureOpenAIProvider implements LlmProvider {
     return {
       id: data.id,
       content: data.choices[0]?.message?.content ?? '',
-      model: data.model ?? this.deployment,
+      model: request.model ?? data.model ?? deployment,
       finishReason: (data.choices[0]?.finish_reason as LlmResponse['finishReason']) ?? 'stop',
       usage: {
         promptTokens: data.usage.prompt_tokens,

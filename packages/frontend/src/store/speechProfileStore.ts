@@ -14,6 +14,16 @@ const DEFAULT_PROFILE: SpeechProfile = {
   confirmationThreshold: 0.6,
   consentStoringCorrections: false,
   consentLocalLearning: false,
+  voiceEngine: 'browser',
+  voiceModel: 'Natural British Male (Browser auto-select)',
+  voiceEndpoint: '',
+  voiceId: '',
+  voiceRate: 0.95,
+  voicePitch: 0.92,
+  voiceVolume: 1.0,
+  personalityStyle: 'british-butler',
+  personalityPrompt:
+    'Speak like a polished British butler with scientific rigor, curious reasoning, confident authority, and a lightly sassy wit. Be concise, practical, and respectful.',
   wakeWord: {
     enabled: false,
     phrase: 'Hey J',
@@ -21,6 +31,48 @@ const DEFAULT_PROFILE: SpeechProfile = {
   },
   updatedAt: new Date().toISOString(),
 };
+
+function normalizeProfile(profile: Partial<SpeechProfile> | undefined): SpeechProfile {
+  const rawWakeWord = profile?.wakeWord as Partial<SpeechProfile['wakeWord']> | undefined;
+  const rawSubstitutions = Array.isArray(profile?.substitutions) ? profile.substitutions : [];
+  const substitutions = rawSubstitutions
+    .filter((entry): entry is { heard: string; intended: string } => {
+      return Boolean(
+        entry
+        && typeof entry === 'object'
+        && typeof (entry as { heard?: unknown }).heard === 'string'
+        && typeof (entry as { intended?: unknown }).intended === 'string',
+      );
+    })
+    .map((entry) => ({ heard: entry.heard.trim(), intended: entry.intended.trim() }))
+    .filter((entry) => entry.heard.length > 0 && entry.intended.length > 0);
+
+  const customVocabulary = Array.isArray(profile?.customVocabulary)
+    ? profile.customVocabulary.filter((word): word is string => typeof word === 'string' && word.trim().length > 0)
+    : [];
+
+  const rawAliases = profile?.commandAliases && typeof profile.commandAliases === 'object'
+    ? profile.commandAliases
+    : {};
+  const commandAliases = Object.fromEntries(
+    Object.entries(rawAliases).filter(
+      (entry): entry is [string, string] => typeof entry[0] === 'string' && typeof entry[1] === 'string',
+    ),
+  );
+
+  return {
+    ...DEFAULT_PROFILE,
+    ...profile,
+    substitutions,
+    customVocabulary,
+    commandAliases,
+    wakeWord: {
+      ...DEFAULT_PROFILE.wakeWord,
+      ...(rawWakeWord ?? {}),
+    },
+    updatedAt: profile?.updatedAt ?? new Date().toISOString(),
+  };
+}
 
 interface SpeechProfileState {
   profile: SpeechProfile;
@@ -34,6 +86,7 @@ interface SpeechProfileState {
   addAlias: (alias: string, expanded: string) => void;
   removeAlias: (alias: string) => void;
   setWakeWord: (patch: Partial<SpeechProfile['wakeWord']>) => void;
+  setProfile: (profile: Partial<SpeechProfile>) => void;
   markSaved: () => void;
 }
 
@@ -121,8 +174,24 @@ export const useSpeechProfileStore = create<SpeechProfileState>()(
           isDirty: true,
         })),
 
+      setProfile: (profile) =>
+        set({
+          profile: normalizeProfile(profile),
+          isDirty: false,
+        }),
+
       markSaved: () => set({ isDirty: false }),
     }),
-    { name: 'aurora-speech-profile' },
+    {
+      name: 'aurora-speech-profile',
+      merge: (persistedState, currentState) => {
+        const state = persistedState as Partial<SpeechProfileState> | undefined;
+        return {
+          ...currentState,
+          ...state,
+          profile: normalizeProfile(state?.profile),
+        };
+      },
+    },
   ),
 );

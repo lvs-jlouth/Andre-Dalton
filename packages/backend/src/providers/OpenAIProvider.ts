@@ -40,7 +40,7 @@ export class OpenAIProvider implements LlmProvider {
   async sendMessage(request: LlmRequest): Promise<LlmResponse> {
     if (!this.apiKey) throw new Error('OpenAI API key not configured');
     const env = getEnv();
-    const model = request.model ?? 'gpt-4o-mini';
+    const model = request.model ?? 'gpt-5-mini';
 
     const messages = request.systemPrompt
       ? [{ role: 'system', content: request.systemPrompt }, ...request.messages]

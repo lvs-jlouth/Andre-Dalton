@@ -8,7 +8,7 @@ interface PanelProps {
   'aria-label'?: string;
 }
 
-/** Glassmorphism panel — the base building block of the AURORA HUD. */
+/** Glassmorphism panel — the base building block of the J.A.R.G.I.I.N. HUD. */
 export function Panel({ children, title, className = '', role, 'aria-label': ariaLabel }: PanelProps) {
   return (
     <section

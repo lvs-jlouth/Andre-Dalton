@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useSettingsStore } from '../../store/settingsStore.js';
 
 interface HUDLayoutProps {
@@ -12,6 +12,12 @@ interface HUDLayoutProps {
  */
 export function HUDLayout({ children }: HUDLayoutProps) {
   const { highContrast, reducedMotion, largeText, fontScale } = useSettingsStore((s) => s.accessibility);
+  const effectiveScale = Number.isFinite(fontScale) ? Math.min(2.5, Math.max(0.8, fontScale)) : 1;
+  const baseFontRem = largeText ? 1 : 0.875;
+  const scaledStyle = {
+    '--aurora-font-scale': String(effectiveScale),
+    '--aurora-base-font-size': `${baseFontRem}rem`,
+  } as CSSProperties;
 
   return (
     <div
@@ -20,11 +26,11 @@ export function HUDLayout({ children }: HUDLayoutProps) {
         bg-aurora-bg
         bg-grid-hud bg-grid-hud
         text-aurora-white
+        aurora-scale-text
         ${highContrast ? 'contrast-more' : ''}
         ${reducedMotion ? 'motion-reduce' : ''}
-        ${largeText ? 'text-base' : 'text-sm'}
       `}
-      style={{ fontSize: `${fontScale}rem` }}
+      style={scaledStyle}
     >
       {/* Subtle scanline overlay — hidden in reduced motion mode */}
       {!reducedMotion && (

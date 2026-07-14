@@ -13,11 +13,17 @@ export interface PrivacySettings {
   persistTranscripts: boolean;
   consentSpeechImprovement: boolean;
   debugMode: boolean;
+  m365ContextEnabled: boolean;
 }
 
 export interface AppSettings {
   accessibility: AccessibilitySettings;
   privacy: PrivacySettings;
+}
+
+export interface UserConfigPayload extends AppSettings {
+  speechProfile: import('./speech.js').SpeechProfile;
+  updatedAt?: string;
 }
 
 export const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
@@ -35,4 +41,5 @@ export const DEFAULT_PRIVACY: PrivacySettings = {
   persistTranscripts: false,
   consentSpeechImprovement: false,
   debugMode: false,
+  m365ContextEnabled: false,
 };

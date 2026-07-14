@@ -1,21 +1,23 @@
 import { useSettingsStore } from '../../store/settingsStore.js';
 import { useAssistantStore } from '../../store/assistantStore.js';
 
-type Panel = 'dashboard' | 'providers' | 'voice' | 'accessibility' | 'privacy';
+type Panel = 'dashboard' | 'settings';
 
 const NAV_ITEMS: { id: Panel; label: string; shortLabel: string }[] = [
   { id: 'dashboard', label: 'Dashboard', shortLabel: 'Dash' },
-  { id: 'providers', label: 'Providers', shortLabel: 'AI' },
-  { id: 'voice', label: 'Voice Profile', shortLabel: 'Voice' },
-  { id: 'accessibility', label: 'Accessibility', shortLabel: 'A11y' },
-  { id: 'privacy', label: 'Privacy', shortLabel: 'Privacy' },
+  { id: 'settings', label: 'Settings', shortLabel: 'Settings' },
 ];
+
+interface StatusBarProps {
+  onToggleSidebar?: () => void;
+  sidebarOpen?: boolean;
+}
 
 /**
  * StatusBar — top navigation and status strip.
  * Uses a <nav> element with proper ARIA landmarks for screen reader navigation.
  */
-export function StatusBar() {
+export function StatusBar({ onToggleSidebar, sidebarOpen = false }: StatusBarProps) {
   const activePanel = useSettingsStore((s) => s.activePanel);
   const setActivePanel = useSettingsStore((s) => s.setActivePanel);
   const status = useAssistantStore((s) => s.status);
@@ -28,6 +30,22 @@ export function StatusBar() {
       <div className="flex items-center justify-between px-4 py-2 max-w-7xl mx-auto">
         {/* Logo / identity */}
         <div className="flex items-center gap-3">
+          {activePanel === 'dashboard' && onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              aria-label={sidebarOpen ? 'Close assistant sidebar' : 'Open assistant sidebar'}
+              aria-expanded={sidebarOpen}
+              className="inline-flex lg:hidden w-9 h-9 rounded-lg border border-aurora-border/60 items-center justify-center text-aurora-cyan hover:bg-aurora-cyan/10 focus:outline-none focus:ring-2 focus:ring-aurora-cyan/50"
+            >
+              <span className="sr-only">Toggle sidebar</span>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M3 5H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M3 9H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M3 13H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
           <div
             className="w-8 h-8 rounded-lg bg-aurora-cyan/20 border border-aurora-cyan/40 flex items-center justify-center"
             aria-hidden="true"
@@ -38,7 +56,7 @@ export function StatusBar() {
             </svg>
           </div>
           <span className="text-sm font-mono font-bold tracking-widest text-aurora-cyan">
-            AURORA
+            J.A.R.G.I.I.N.
           </span>
         </div>
 
@@ -81,7 +99,7 @@ export function StatusBar() {
           <span className="text-xs font-mono text-aurora-muted capitalize hidden sm:inline">
             {status}
           </span>
-          <span className="sr-only">AURORA status: {status}</span>
+          <span className="sr-only">J.A.R.G.I.I.N. status: {status}</span>
         </div>
       </div>
     </header>
