@@ -4,6 +4,7 @@ import { getProvider, getDefaultProvider } from '../providers/index.js';
 import type { LlmMessage } from '../providers/types.js';
 import { createLogger } from '../utils/logger.js';
 import { getEnv } from '../utils/env.js';
+import type { SharedSubsystems } from '@unifi/shared-core';
 
 const log = createLogger('route:assistant');
 
@@ -21,7 +22,7 @@ const AssistantRequestSchema = z.object({
   temperature: z.number().min(0).max(2).optional(),
 });
 
-export async function assistantRoutes(app: FastifyInstance): Promise<void> {
+export async function assistantRoutes(app: FastifyInstance, shared: SharedSubsystems): Promise<void> {
   /** POST /assistant/message — send a conversation turn to the configured LLM */
   app.post('/message', async (req, reply) => {
     const parsed = AssistantRequestSchema.safeParse(req.body);
@@ -42,6 +43,16 @@ export async function assistantRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const env = getEnv();
+    const principal = shared.authentication.authenticate();
+    if (!shared.authorization.canPerform(principal, 'assistant.message')) {
+      shared.auditLogging.record({
+        actorId: principal.id,
+        action: 'assistant.message',
+        outcome: 'denied',
+        details: 'Authorization failed for assistant.message',
+      });
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
 
     // Privacy: do not log prompt content unless debug mode is explicitly enabled
     if (env.DEBUG_MODE) {
@@ -60,6 +71,13 @@ export async function assistantRoutes(app: FastifyInstance): Promise<void> {
       });
 
       // Only return the response content and metadata — never echo back prompts
+      shared.observability.increment('assistant.messages.handled');
+      shared.auditLogging.record({
+        actorId: principal.id,
+        action: 'assistant.message',
+        outcome: 'success',
+        details: `Provider ${provider.id}`,
+      });
       return reply.send({
         content: response.content,
         model: response.model,

@@ -5,13 +5,16 @@
   "description": "AURORA – a secure, accessible, voice-first AI assistant",
   "workspaces": [
     "packages/backend",
-    "packages/frontend"
+    "packages/frontend",
+    "packages/shared-core",
+    "packages/governance-agent",
+    "packages/knowledge-agent"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=packages/backend\" \"npm run dev --workspace=packages/frontend\"",
-    "build": "npm run build --workspace=packages/backend && npm run build --workspace=packages/frontend",
-    "test": "npm run test --workspace=packages/backend && npm run test --workspace=packages/frontend",
-    "lint": "npm run lint --workspace=packages/backend && npm run lint --workspace=packages/frontend"
+    "build": "npm run build --workspace=packages/shared-core && npm run build --workspace=packages/governance-agent && npm run build --workspace=packages/knowledge-agent && npm run build --workspace=packages/backend && npm run build --workspace=packages/frontend",
+    "test": "npm run test --workspace=packages/governance-agent && npm run test --workspace=packages/knowledge-agent && npm run test --workspace=packages/backend && npm run test --workspace=packages/frontend",
+    "lint": "npm run lint --workspace=packages/shared-core && npm run lint --workspace=packages/governance-agent && npm run lint --workspace=packages/knowledge-agent && npm run lint --workspace=packages/backend && npm run lint --workspace=packages/frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

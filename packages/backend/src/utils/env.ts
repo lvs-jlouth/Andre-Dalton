@@ -34,6 +34,7 @@ export interface AppEnv {
   // Privacy
   DEBUG_MODE: boolean;
   PERSIST_TRANSCRIPTS: boolean;
+  GOVERNANCE_API_TOKEN?: string;
 }
 
 let _env: AppEnv | null = null;
@@ -68,6 +69,7 @@ export function getEnv(): AppEnv {
 
     DEBUG_MODE: process.env['DEBUG_MODE'] === 'true',
     PERSIST_TRANSCRIPTS: process.env['PERSIST_TRANSCRIPTS'] === 'true',
+    GOVERNANCE_API_TOKEN: process.env['GOVERNANCE_API_TOKEN'] || undefined,
   };
 
   return _env;
