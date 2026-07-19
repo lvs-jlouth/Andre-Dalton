@@ -44,7 +44,17 @@ export async function governanceRoutes(
     });
   });
 
-  app.post('/generate', async (req, reply) => {
+  app.post(
+    '/generate',
+    {
+      config: {
+        rateLimit: {
+          max: 30,
+          timeWindow: '1 minute',
+        },
+      },
+    },
+    async (req, reply) => {
     const token = req.headers['x-api-token'];
     const apiToken = Array.isArray(token) ? token[0] : token;
     const principal = shared.authentication.authenticate(apiToken);
@@ -64,7 +74,8 @@ export async function governanceRoutes(
       return reply.status(400).send({ error: 'Invalid request', details: parsed.error.flatten() });
     }
 
-    const response = agent.generate(parsed.data);
-    return reply.send(response);
-  });
+      const response = agent.generate(parsed.data);
+      return reply.send(response);
+    },
+  );
 }
