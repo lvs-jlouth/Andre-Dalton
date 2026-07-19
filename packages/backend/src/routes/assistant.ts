@@ -24,70 +24,81 @@ const AssistantRequestSchema = z.object({
 
 export async function assistantRoutes(app: FastifyInstance, shared: SharedSubsystems): Promise<void> {
   /** POST /assistant/message — send a conversation turn to the configured LLM */
-  app.post('/message', async (req, reply) => {
-    const parsed = AssistantRequestSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return reply.status(400).send({ error: 'Invalid request', details: parsed.error.flatten() });
-    }
-
-    const { messages, providerId, model, systemPrompt, maxTokens, temperature } = parsed.data;
-
-    let provider;
-    try {
-      provider = providerId ? getProvider(providerId) : getDefaultProvider();
-      if (!provider) {
-        return reply.status(404).send({ error: `Provider "${providerId}" not found` });
+  app.post(
+    '/message',
+    {
+      config: {
+        rateLimit: {
+          max: 30,
+          timeWindow: '1 minute',
+        },
+      },
+    },
+    async (req, reply) => {
+      const parsed = AssistantRequestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return reply.status(400).send({ error: 'Invalid request', details: parsed.error.flatten() });
       }
-    } catch (err) {
-      return reply.status(503).send({ error: 'No provider configured' });
-    }
 
-    const env = getEnv();
-    const principal = shared.authentication.authenticate();
-    if (!shared.authorization.canPerform(principal, 'assistant.message')) {
-      shared.auditLogging.record({
-        actorId: principal.id,
-        action: 'assistant.message',
-        outcome: 'denied',
-        details: 'Authorization failed for assistant.message',
-      });
-      return reply.status(403).send({ error: 'Forbidden' });
-    }
+      const { messages, providerId, model, systemPrompt, maxTokens, temperature } = parsed.data;
 
-    // Privacy: do not log prompt content unless debug mode is explicitly enabled
-    if (env.DEBUG_MODE) {
-      log.debug(`Sending message to provider: ${provider.id}`);
-    } else {
-      log.info(`Message request → provider: ${provider.id}`);
-    }
+      let provider;
+      try {
+        provider = providerId ? getProvider(providerId) : getDefaultProvider();
+        if (!provider) {
+          return reply.status(404).send({ error: `Provider "${providerId}" not found` });
+        }
+      } catch (err) {
+        return reply.status(503).send({ error: 'No provider configured' });
+      }
 
-    try {
-      const response = await provider.sendMessage({
-        messages: messages as LlmMessage[],
-        model,
-        systemPrompt,
-        maxTokens,
-        temperature,
-      });
+      const env = getEnv();
+      const principal = shared.authentication.authenticate();
+      if (!shared.authorization.canPerform(principal, 'assistant.message')) {
+        shared.auditLogging.record({
+          actorId: principal.id,
+          action: 'assistant.message',
+          outcome: 'denied',
+          details: 'Authorization failed for assistant.message',
+        });
+        return reply.status(403).send({ error: 'Forbidden' });
+      }
 
-      // Only return the response content and metadata — never echo back prompts
-      shared.observability.increment('assistant.messages.handled');
-      shared.auditLogging.record({
-        actorId: principal.id,
-        action: 'assistant.message',
-        outcome: 'success',
-        details: `Provider ${provider.id}`,
-      });
-      return reply.send({
-        content: response.content,
-        model: response.model,
-        finishReason: response.finishReason,
-        usage: response.usage,
-        providerId: provider.id,
-      });
-    } catch (err) {
-      log.error('Assistant message error', err);
-      return reply.status(502).send({ error: 'Failed to get response from AI provider' });
-    }
-  });
+      // Privacy: do not log prompt content unless debug mode is explicitly enabled
+      if (env.DEBUG_MODE) {
+        log.debug(`Sending message to provider: ${provider.id}`);
+      } else {
+        log.info(`Message request → provider: ${provider.id}`);
+      }
+
+      try {
+        const response = await provider.sendMessage({
+          messages: messages as LlmMessage[],
+          model,
+          systemPrompt,
+          maxTokens,
+          temperature,
+        });
+
+        // Only return the response content and metadata — never echo back prompts
+        shared.observability.increment('assistant.messages.handled');
+        shared.auditLogging.record({
+          actorId: principal.id,
+          action: 'assistant.message',
+          outcome: 'success',
+          details: `Provider ${provider.id}`,
+        });
+        return reply.send({
+          content: response.content,
+          model: response.model,
+          finishReason: response.finishReason,
+          usage: response.usage,
+          providerId: provider.id,
+        });
+      } catch (err) {
+        log.error('Assistant message error', err);
+        return reply.status(502).send({ error: 'Failed to get response from AI provider' });
+      }
+    },
+  );
 }
