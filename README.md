@@ -2,6 +2,8 @@
 
 > An original, privacy-first, voice-forward AI assistant with a cinematic HUD interface. Designed with deep accessibility support for users with non-standard speech (including dysarthric patterns), mobility constraints, and diverse interaction needs.
 
+This monorepo now includes three services: the UniFi operations assistant, the **Tech Elixir Governance & Documentation Agent**, and the **Tech Elixir Knowledge & Institutional Memory Agent**.
+
 ---
 
 ## Quick Start
@@ -157,6 +159,9 @@ Andre-Dalton/
 │   │   │   ├── services/          # speechProfile service
 │   │   │   └── utils/             # env loader, logger, redaction
 │   │   └── tests/                 # Vitest test suite
+│   ├── shared-core/               # Shared authz/authn/db/audit/approvals/reporting/config/observability
+│   ├── governance-agent/          # Tech Elixir governance and documentation generator
+│   ├── knowledge-agent/           # Tech Elixir knowledge ingestion, retrieval, and institutional memory
 │   └── frontend/                  # React + Vite + Tailwind PWA
 │       ├── src/
 │       │   ├── components/
@@ -191,6 +196,83 @@ Andre-Dalton/
 | `PUT` | `/profile/speech` | Save speech/interaction profile |
 | `GET` | `/settings/accessibility` | Load accessibility settings |
 | `PUT` | `/settings/accessibility` | Save accessibility settings |
+| `GET` | `/governance/catalog` | Governance agent capabilities and shared subsystem map |
+| `POST` | `/governance/generate` | Generate tokenized governance document packs |
+| `GET` | `/knowledge/sources` | List registered knowledge sources |
+| `GET` | `/knowledge/documents` | List knowledge documents |
+| `GET` | `/knowledge/chunks` | List indexed chunks |
+| `GET` | `/knowledge/entities` | List extracted entities |
+| `GET` | `/knowledge/relationships` | List extracted relationships |
+| `POST` | `/knowledge/sources` | Register knowledge source |
+| `POST` | `/knowledge/ingest` | Ingest and index a knowledge document |
+| `POST` | `/knowledge/search` | Hybrid-style search entrypoint |
+| `POST` | `/knowledge/query` | Evidence-backed knowledge question answering |
+| `POST` | `/knowledge/reindex` | Reindex knowledge corpus |
+| `GET/POST` | `/knowledge/decisions` | List or create decision records |
+| `GET/POST` | `/knowledge/lessons` | List or create lessons learned records |
+| `GET/POST` | `/knowledge/baselines` | List or create baseline records |
+| `GET/POST` | `/knowledge/drift-context` | List or create drift context records |
+| `GET/POST` | `/knowledge/change-history` | List or create change history records |
+| `GET/POST` | `/knowledge/risk-history` | List or create risk history records |
+| `GET` | `/solution-center/documentation-automation/capabilities` | Tech-Elixir Solution Center integration capabilities |
+| `POST` | `/solution-center/documentation-automation/run` | Orchestrate governance generation and automatic knowledge ingestion |
+
+---
+
+## Governance & Documentation Agent
+
+The Tech Elixir Governance & Documentation Agent is implemented in the same repository and shares core subsystems with the UniFi AI Operations Assistant:
+
+- Authentication and authorization
+- Shared in-memory database abstraction
+- Audit logging and approval workflows
+- Reporting engine
+- Shared API and UI framework metadata
+- Observability and configuration
+
+The generator produces numbered sets:
+
+`00` through `10`, plus `Appendices`, `Glossary`, and `Reference Materials`.
+
+Every template is tokenized and includes placeholders such as:
+
+`{{PROJECT_NAME}}`, `{{SERVER_NAME}}`, `{{IP_ADDRESS}}`, `{{SITE_NAME}}`, `{{CHANGE_ID}}`, `{{APPROVER_NAME}}`, `{{DATE_APPROVED}}`, and `{{VERSION}}`.
+
+Supported output formats:
+
+- Markdown
+- Word template content
+- HTML
+- PDF template content
+
+Future support is designed for SharePoint Pages, Microsoft 365 connectors, and Power Platform connectors.
+
+---
+
+## Knowledge & Institutional Memory Agent
+
+The knowledge agent is the retrieval and reasoning layer across operations and governance artifacts. It provides:
+
+- Source registration and resumable/idempotent ingestion
+- Structured chunking for document sections
+- Entity and relationship extraction
+- Knowledge object models for sources, documents, chunks, entities, relationships, decisions, lessons, and query history
+- Evidence-backed query responses with confidence and gaps
+- Baseline, drift-context, change-history, and risk-history APIs
+
+The implementation is integrated with shared authentication, authorization, audit logging, reporting, and observability in the monorepo.
+
+---
+
+## Tech-Elixir Solution Center Integration
+
+The documentation automation integration is now exposed as a single orchestrated flow:
+
+1. Call `POST /solution-center/documentation-automation/run` with tokenized inputs and source summaries.
+2. Governance artifacts are generated through the governance agent.
+3. Generated artifacts are automatically ingested into the knowledge agent and become searchable/queryable.
+
+Use `x-api-token` for shared authorization and `x-request-id` for traceable automation runs.
 
 ---
 
